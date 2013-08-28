@@ -227,8 +227,6 @@ class Parser:
         return sys.stdin.read(size)
 
     def get_author(self):
-        global bad_mail
-
         ex = None
         m = RAW_AUTHOR_RE.match(self.line)
         if not m:
@@ -261,8 +259,6 @@ def fix_file_path(path):
     return os.path.relpath(path, '/')
 
 def export_files(files):
-    global marks, filenodes
-
     final = []
     for f in files:
         fid = node.hex(f.filenode())
@@ -344,8 +340,6 @@ def fixup_user_hg(user):
     return (name, mail)
 
 def fixup_user(user):
-    global mode, bad_mail
-
     if mode == 'git':
         name, mail = fixup_user_git(user)
     else:
@@ -374,7 +368,7 @@ def updatebookmarks(repo, peer):
         bookmarks.write(repo)
 
 def get_repo(url, alias):
-    global dirname, peer
+    global peer
 
     myui = ui.ui()
     myui.setconfig('ui', 'interactive', 'off')
@@ -429,16 +423,12 @@ def get_repo(url, alias):
     return repo
 
 def rev_to_mark(rev):
-    global marks
     return marks.from_rev(rev.hex())
 
 def mark_to_rev(mark):
-    global marks
     return marks.to_rev(mark)
 
 def export_ref(repo, name, kind, head):
-    global prefix, marks, mode
-
     ename = '%s/%s' % (kind, name)
     try:
         tip = marks.get_tip(ename)
@@ -550,12 +540,9 @@ def export_branch(repo, branch):
     export_ref(repo, branch, 'branches', head)
 
 def export_head(repo):
-    global g_head
     export_ref(repo, g_head[0], 'bookmarks', g_head[1])
 
 def do_capabilities(parser):
-    global prefix, dirname
-
     print "import"
     print "export"
     print "refspec refs/heads/branches/*:%s/branches/*" % prefix
@@ -575,8 +562,6 @@ def branch_tip(branch):
     return branches[branch][-1]
 
 def get_branch_tip(repo, branch):
-    global branches
-
     heads = branches.get(hgref(branch), None)
     if not heads:
         return None
@@ -589,7 +574,7 @@ def get_branch_tip(repo, branch):
     return heads[0]
 
 def list_head(repo, cur):
-    global g_head, bmarks, fake_bmark
+    global g_head, fake_bmark
 
     if 'default' not in branches:
         # empty repo
@@ -605,8 +590,6 @@ def list_head(repo, cur):
     g_head = (head, node)
 
 def do_list(parser):
-    global branches, bmarks, track_branches
-
     repo = parser.repo
     for bmark, node in bookmarks.listbookmarks(repo).iteritems():
         bmarks[bmark] = repo[node]
@@ -674,8 +657,6 @@ def do_import(parser):
     print 'done'
 
 def parse_blob(parser):
-    global blob_marks
-
     parser.next()
     mark = parser.get_mark()
     parser.next()
@@ -692,9 +673,6 @@ def get_merge_files(repo, p1, p2, files):
             files[e] = f
 
 def parse_commit(parser):
-    global marks, blob_marks, parsed_refs
-    global mode
-
     from_mark = merge_mark = None
 
     ref = parser[1]
@@ -812,8 +790,6 @@ def parse_commit(parser):
     marks.new_mark(node, commit_mark)
 
 def parse_reset(parser):
-    global parsed_refs
-
     ref = parser[1]
     parser.next()
     # ugh
@@ -1006,8 +982,6 @@ def check_tip(ref, kind, name, heads):
         return tip in heads
 
 def do_export(parser):
-    global parsed_refs, bmarks, peer
-
     p_bmarks = []
     p_revs = {}
 
