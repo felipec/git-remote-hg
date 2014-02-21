@@ -422,7 +422,7 @@ def get_repo(url, alias):
 
         repo = hg.repository(myui, local_path)
         try:
-            peer = hg.peer(myui, {}, url)
+            peer = hg.peer(repo.ui, {}, url)
         except:
             die('Repository error')
         repo.pull(peer, heads=None, force=True)
