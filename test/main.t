@@ -773,4 +773,29 @@ test_expect_success 'remote double failed push' '
 	)
 '
 
+test_expect_success 'clone remote with null bookmark, then push' '
+	test_when_finished "rm -rf gitrepo* hgrepo*" &&
+
+	(
+	hg init hgrepo &&
+	cd hgrepo &&
+	echo a > a &&
+	hg add a &&
+	hg commit -m a &&
+	hg bookmark -r null bookmark
+	) &&
+
+	(
+	git clone "hg::hgrepo" gitrepo &&
+	check gitrepo HEAD a &&
+	cd gitrepo &&
+	git checkout --quiet -b bookmark &&
+	git remote -v &&
+	echo b > b &&
+	git add b &&
+	git commit -m b &&
+	git push origin bookmark
+	)
+'
+
 test_done
