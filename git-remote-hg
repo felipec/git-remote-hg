@@ -461,8 +461,12 @@ def export_ref(repo, name, kind, head):
 
         author = "%s %d %s" % (fixup_user(user), time, gittz(tz))
         if 'committer' in extra:
-            user, time, tz = extra['committer'].rsplit(' ', 2)
-            committer = "%s %s %s" % (user, time, gittz(int(tz)))
+            try:
+                cuser, ctime, ctz = extra['committer'].rsplit(' ', 2)
+                committer = "%s %s %s" % (cuser, ctime, gittz(int(ctz)))
+            except ValueError:
+                cuser = extra['committer']
+                committer = "%s %d %s" % (fixup_user(cuser), time, gittz(tz))
         else:
             committer = author
 
