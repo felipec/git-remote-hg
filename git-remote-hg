@@ -992,9 +992,17 @@ def push_unsafe(repo, remote, parsed_refs, p_revs):
     if unbundle:
         if force:
             remoteheads = ['force']
-        return remote.unbundle(cg, remoteheads, 'push')
+        ret = remote.unbundle(cg, remoteheads, 'push')
     else:
-        return remote.addchangegroup(cg, 'push', repo.url())
+        ret = remote.addchangegroup(cg, 'push', repo.url())
+
+    phases = remote.listkeys('phases')
+    if phases:
+        for head in p_revs:
+            # update to public
+            remote.pushkey('phases', hghex(head), '1', '0')
+
+    return ret
 
 def push(repo, remote, parsed_refs, p_revs):
     if hasattr(remote, 'canpush') and not remote.canpush():
