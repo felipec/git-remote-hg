@@ -914,6 +914,11 @@ def checkheads_bmark(repo, ref, ctx):
 
     ctx_old = bmarks[bmark]
     ctx_new = ctx
+
+    if not ctx.rev():
+        print "error %s unknown" % ref
+        return False
+
     if not repo.changelog.descendant(ctx_old.rev(), ctx_new.rev()):
         if force_push:
             print "ok %s forced update" % ref
