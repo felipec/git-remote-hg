@@ -1255,12 +1255,10 @@ def main(args):
             die('unhandled command: %s' % line)
         sys.stdout.flush()
 
+    marks.store()
+
 def bye():
-    if not marks:
-        return
-    if not is_tmp:
-        marks.store()
-    else:
+    if is_tmp:
         shutil.rmtree(dirname)
 
 atexit.register(bye)
