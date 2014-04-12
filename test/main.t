@@ -106,17 +106,18 @@ setup () {
 
 setup
 
-test_expect_success 'cloning' '
-	test_when_finished "rm -rf gitrepo*" &&
-
+test_expect_success 'setup' '
 	(
 	hg init hgrepo &&
 	cd hgrepo &&
 	echo zero >content &&
 	hg add content &&
 	hg commit -m zero
-	) &&
+	)
+'
 
+test_expect_success 'cloning' '
+	test_when_finished "rm -rf gitrepo*" &&
 	git clone "hg::hgrepo" gitrepo &&
 	check gitrepo HEAD zero
 '
