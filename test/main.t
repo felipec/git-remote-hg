@@ -25,7 +25,7 @@ fi
 
 check () {
 	echo $3 >expected &&
-	git --git-dir=$1/.git log --format='%s' -1 $2 >actual
+	git --git-dir=$1/.git log --format='%s' -1 $2 >actual &&
 	test_cmp expected actual
 }
 
@@ -103,12 +103,12 @@ check_push () {
 }
 
 setup () {
-	(
-	echo "[ui]"
-	echo "username = H G Wells <wells@example.com>"
-	echo "[extensions]"
-	echo "mq ="
-	) >>"$HOME"/.hgrc &&
+	cat >> "$HOME"/.hgrc <<-EOF &&
+	[ui]
+	username = H G Wells <wells@example.com>
+	[extensions]
+	mq =
+	EOF
 
 	GIT_AUTHOR_DATE="2007-01-01 00:00:00 +0230" &&
 	GIT_COMMITTER_DATE="$GIT_AUTHOR_DATE" &&
