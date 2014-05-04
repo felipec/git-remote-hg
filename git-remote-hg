@@ -13,6 +13,7 @@
 # "$GIT_DIR/hg/origin/clone/.hg/".
 
 from mercurial import hg, ui, bookmarks, context, encoding, node, error, extensions, discovery, util
+from mercurial import changegroup
 
 import re
 import sys
@@ -1024,7 +1025,10 @@ def push_unsafe(repo, remote, parsed_refs, p_revs):
     if not checkheads(repo, remote, p_revs):
         return None
 
-    cg = repo.getbundle('push', heads=list(p_revs), common=common)
+    if check_version(3, 0):
+        cg = changegroup.getbundle(repo, 'push', heads=list(p_revs), common=common)
+    else:
+        cg = repo.getbundle('push', heads=list(p_revs), common=common)
 
     unbundle = remote.capable('unbundle')
     if unbundle:
