@@ -798,4 +798,154 @@ test_expect_success 'clone remote with null bookmark, then push' '
 	)
 '
 
+test_expect_success 'notes' '
+	test_when_finished "rm -rf hgrepo gitrepo" &&
+
+	(
+	hg init hgrepo &&
+	cd hgrepo &&
+	echo one > content &&
+	hg add content &&
+	hg commit -m one &&
+	echo two > content &&
+	hg commit -m two
+	) &&
+
+	git clone "hg::hgrepo" gitrepo &&
+	hg -R hgrepo log --template "{node}\n\n" > expected &&
+	git --git-dir=gitrepo/.git log --pretty="tformat:%N" --notes=hg > actual &&
+	test_cmp expected actual
+'
+
+test_expect_failure 'push updates notes' '
+	test_when_finished "rm -rf hgrepo gitrepo" &&
+
+	(
+	hg init hgrepo &&
+	cd hgrepo &&
+	echo one > content &&
+	hg add content &&
+	hg commit -m one
+	) &&
+
+	git clone "hg::hgrepo" gitrepo &&
+
+	(
+	cd gitrepo &&
+	echo two > content &&
+	git commit -a -m two
+	git push
+	) &&
+
+	hg -R hgrepo log --template "{node}\n\n" > expected &&
+	git --git-dir=gitrepo/.git log --pretty="tformat:%N" --notes=hg > actual &&
+	test_cmp expected actual
+'
+
+test_expect_success 'pull tags' '
+	test_when_finished "rm -rf hgrepo gitrepo" &&
+
+	(
+	hg init hgrepo &&
+	cd hgrepo &&
+	echo one > content &&
+	hg add content &&
+	hg commit -m one
+	) &&
+
+	git clone "hg::hgrepo" gitrepo &&
+
+	(cd hgrepo && hg tag v1.0) &&
+	(cd gitrepo && git pull) &&
+
+	echo "v1.0" > expected &&
+	git --git-dir=gitrepo/.git tag > actual &&
+	test_cmp expected actual
+'
+
+test_expect_success 'push merged named branch' '
+	test_when_finished "rm -rf hgrepo gitrepo" &&
+
+	(
+	hg init hgrepo &&
+	cd hgrepo &&
+	echo one > content &&
+	hg add content &&
+	hg commit -m one &&
+	hg branch feature &&
+	echo two > content &&
+	hg commit -m two &&
+	hg update default &&
+	echo three > content &&
+	hg commit -m three
+	) &&
+
+	(
+	git clone "hg::hgrepo" gitrepo &&
+	cd gitrepo &&
+	git merge -m Merge -Xtheirs origin/branches/feature &&
+	git push
+	) &&
+
+	cat > expected <<-EOF
+	Merge
+	three
+	two
+	one
+	EOF
+	hg -R hgrepo log --template "{desc}\n" > actual &&
+	test_cmp expected actual
+'
+
+test_expect_success 'light tag sets author' '
+	test_when_finished "rm -rf hgrepo gitrepo" &&
+
+	(
+	hg init hgrepo &&
+	cd hgrepo &&
+	echo one > content &&
+	hg add content &&
+	hg commit -m one
+	) &&
+
+	(
+	git clone "hg::hgrepo" gitrepo &&
+	cd gitrepo &&
+	git tag v1.0 &&
+	git push --tags
+	) &&
+
+	echo "C O Mitter <committer@example.com>" > expected &&
+	hg -R hgrepo log --template "{author}\n" -r tip > actual &&
+	test_cmp expected actual
+'
+
+test_expect_success 'push tag different branch' '
+	test_when_finished "rm -rf hgrepo gitrepo" &&
+
+	(
+	hg init hgrepo &&
+	cd hgrepo &&
+	echo one > content &&
+	hg add content &&
+	hg commit -m one
+	hg branch feature &&
+	echo two > content &&
+	hg commit -m two
+	) &&
+
+	(
+	git clone "hg::hgrepo" gitrepo &&
+	cd gitrepo &&
+	git branch &&
+	git checkout branches/feature &&
+	git tag v1.0 &&
+	git push --tags
+	) &&
+
+	echo feature > expected &&
+	hg -R hgrepo log --template="{branch}\n" -r tip > actual &&
+	test_cmp expected actual
+'
+
 test_done
