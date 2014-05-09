@@ -1,0 +1,25 @@
+language: python
+
+install:
+  - if [ "$HG_VERSION" != "dev" ];
+    then pip install -q Mercurial${HG_VERSION+==$HG_VERSION};
+    else pip install -q http://selenic.com/repo/hg/archive/tip.tar.gz;
+    fi
+  - pip install -q dulwich hg-git || true
+
+before_script:
+  - hg --version || true
+  - pip show hg-git dulwich
+
+script:
+  - make test
+
+matrix:
+  include:
+    - env: HG_VERSION=2.9.1
+    - env: HG_VERSION=2.8.2
+    - env: HG_VERSION=2.7.2
+    - env: HG_VERSION=3.0
+    - env: HG_VERSION=dev
+    - python: 2.7
+    - python: 2.6
