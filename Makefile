@@ -14,7 +14,7 @@ D = $(DESTDIR)
 
 install:
 	install -D -m 755 git-remote-hg \
-		$(D)$(prefix)/bin/git-reinremote-hg
+		$(D)$(prefix)/bin/git-remote-hg
 
 install-doc: doc
 	install -D -m 644 doc/git-remote-hg.1 \
