@@ -103,7 +103,7 @@ check_push () {
 }
 
 setup () {
-	cat >> "$HOME"/.hgrc <<-EOF &&
+	cat > "$HOME"/.hgrc <<-EOF &&
 	[ui]
 	username = H G Wells <wells@example.com>
 	[extensions]

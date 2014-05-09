@@ -54,17 +54,17 @@ hg_log () {
 }
 
 setup () {
-	(
-	echo "[ui]"
-	echo "username = A U Thor <author@example.com>"
-	echo "[defaults]"
-	echo "backout = -d \"0 0\""
-	echo "commit = -d \"0 0\""
-	echo "debugrawcommit = -d \"0 0\""
-	echo "tag = -d \"0 0\""
-	echo "[extensions]"
-	echo "graphlog ="
-	) >>"$HOME"/.hgrc &&
+	cat > "$HOME"/.hgrc <<-EOF &&
+	[ui]
+	username = A U Thor <author@example.com>
+	[defaults]
+	backout = -d "0 0"
+	commit = -d "0 0"
+	debugrawcommit = -d "0 0"
+	tag = -d "0 0"
+	[extensions]"
+	graphlog =
+	EOF
 	git config --global remote-hg.hg-git-compat true
 	git config --global remote-hg.track-branches true
 
