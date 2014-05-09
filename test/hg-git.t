@@ -22,7 +22,7 @@ then
 	test_done
 fi
 
-if ! python -c 'import hggit'
+if ! python -c 'import hggit' > /dev/null 2>&1
 then
 	skip_all='skipping remote-hg tests; hg-git not available'
 	test_done

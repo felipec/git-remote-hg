@@ -1,6 +1,6 @@
 RM ?= rm -f
 
-T = $(wildcard ../test-*.sh)
+T = $(wildcard *.t)
 TEST_DIRECTORY := $(CURDIR)
 
 export TEST_DIRECTORY
