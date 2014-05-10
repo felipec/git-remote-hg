@@ -157,7 +157,9 @@ class Marks:
         self.version = 2
 
     def dict(self):
-        return { 'tips': self.tips, 'marks': self.marks, 'last-mark' : self.last_mark, 'version' : self.version, 'last-note' : self.last_note }
+        return { 'tips': self.tips, 'marks': self.marks,
+                'last-mark': self.last_mark, 'version': self.version,
+                'last-note': self.last_note }
 
     def store(self):
         json.dump(self.dict(), open(self.path, 'w'))
@@ -453,12 +455,12 @@ def gitrange(repo, a, b):
             positive.append(cur)
             pending.remove(cur)
             for p in parents:
-                if not p in negative:
+                if p not in negative:
                     pending.add(p)
         elif cur in negative:
             negative.remove(cur)
             for p in parents:
-                if not p in pending:
+                if p not in pending:
                     negative.add(p)
                 else:
                     pending.discard(p)
@@ -650,7 +652,7 @@ def list_head(repo, cur):
         return
 
     node = repo[branch_tip('default')]
-    head = 'master' if not 'master' in bmarks else 'default'
+    head = 'master' if 'master' not in bmarks else 'default'
     fake_bmark = head
     bmarks[head] = node
 
@@ -679,7 +681,7 @@ def do_list(parser):
             print "? refs/heads/branches/%s" % gitref(branch)
 
     for bmark in bmarks:
-        if  bmarks[bmark].hex() == '0' * 40:
+        if bmarks[bmark].hex() == '0' * 40:
             warn("Ignoring invalid bookmark '%s'", bmark)
         else:
             print "? refs/heads/%s" % gitref(bmark)
@@ -741,7 +743,7 @@ def get_merge_files(repo, p1, p2, files):
         if e not in files:
             if e not in repo[p1].manifest():
                 continue
-            f = { 'ctx' : repo[p1][e] }
+            f = { 'ctx': repo[p1][e] }
             files[e] = f
 
 def c_style_unescape(string):
@@ -782,10 +784,10 @@ def parse_commit(parser):
         if parser.check('M'):
             t, m, mark_ref, path = line.split(' ', 3)
             mark = int(mark_ref[1:])
-            f = { 'mode' : hgmode(m), 'data' : blob_marks[mark] }
+            f = { 'mode': hgmode(m), 'data': blob_marks[mark] }
         elif parser.check('D'):
             t, path = line.split(' ', 1)
-            f = { 'deleted' : True }
+            f = { 'deleted': True }
         else:
             die('Unknown file command: %s' % line)
         path = c_style_unescape(path)
@@ -929,7 +931,7 @@ def write_tag(repo, tag, node, msg, author):
 
     ctx = context.memctx(repo, (p1, p2), msg,
             ['.hgtags'], getfilectx,
-            user, date_tz, {'branch' : branch})
+            user, date_tz, {'branch': branch})
 
     tmp = encoding.encoding
     encoding.encoding = 'utf-8'
@@ -942,7 +944,7 @@ def write_tag(repo, tag, node, msg, author):
 
 def checkheads_bmark(repo, ref, ctx):
     bmark = ref[len('refs/heads/'):]
-    if not bmark in bmarks:
+    if bmark not in bmarks:
         # new bmark
         return True
 
@@ -975,7 +977,7 @@ def checkheads(repo, remote, p_revs):
     for node, ref in p_revs.iteritems():
         ctx = repo[node]
         branch = ctx.branch()
-        if not branch in remotemap:
+        if branch not in remotemap:
             # new branch
             continue
         if not ref.startswith('refs/heads/branches'):
