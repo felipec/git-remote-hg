@@ -12,7 +12,8 @@
 # For remote repositories a local clone is stored in
 # "$GIT_DIR/hg/origin/clone/.hg/".
 
-from mercurial import hg, ui, bookmarks, context, encoding, node, error, extensions, discovery, util
+from mercurial import hg, ui, bookmarks, context, encoding
+from mercurial import node, error, extensions, discovery, util
 from mercurial import changegroup
 
 import re
