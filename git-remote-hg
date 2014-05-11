@@ -23,7 +23,8 @@ import shutil
 import subprocess
 import urllib
 import atexit
-import urlparse, hashlib
+import urlparse
+import hashlib
 import time as ptime
 
 #
