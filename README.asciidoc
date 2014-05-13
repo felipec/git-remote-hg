@@ -122,3 +122,8 @@ this is the one distributed officially by the Git project:
 
 For a comparison between these and other projects go
 https://github.com/felipec/git/wiki/Comparison-of-git-remote-hg-alternatives[here].
+
+== Contributing ==
+
+Send your patches to the mailing list git-fc@googlegroups.com (no need to
+subscribe).
