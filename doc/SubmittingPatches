@@ -1,0 +1,5 @@
+Please send your patches using `git format-patch` to the mailing list:
+git-fc@googlegroups.com.
+
+Make sure all the tests pass by running `make test`, and if possible add a new
+test to exercise the code you are submitting.
