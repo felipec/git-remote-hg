@@ -8,7 +8,7 @@
 
 test_description='Test remote-hg'
 
-test -n "$TEST_DIRECTORY" || TEST_DIRECTORY=${0%/*}/../../t
+test -n "$TEST_DIRECTORY" || TEST_DIRECTORY=$(dirname $0)/
 . "$TEST_DIRECTORY"/test-lib.sh
 
 if ! test_have_prereq PYTHON
