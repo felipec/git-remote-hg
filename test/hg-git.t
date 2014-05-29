@@ -23,8 +23,13 @@ then
 	test_done
 fi
 
-if ! python2 -c 'import hggit' > /dev/null 2>&1
+if python2 -c 'import hggit' > /dev/null 2>&1
 then
+	hggit=hggit
+elif python2 -c 'import hgext.git' > /dev/null 2>&1
+then
+	hggit=hgext.git
+else
 	skip_all='skipping remote-hg tests; hg-git not available'
 	test_done
 fi
@@ -102,7 +107,7 @@ setup () {
 	tag = -d "0 0"
 	[extensions]
 	hgext.bookmarks =
-	hggit =
+	$hggit =
 	graphlog =
 	EOF
 	git config --global receive.denycurrentbranch warn
