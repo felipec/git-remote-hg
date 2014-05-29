@@ -1,6 +1,9 @@
 prefix := $(HOME)
 
-all:
+bindir := $(prefix)/bin
+mandir := $(prefix)/share/man/man1
+
+all: doc
 
 doc: doc/git-remote-hg.1
 
@@ -10,14 +13,15 @@ test:
 doc/git-remote-hg.1: doc/git-remote-hg.txt
 	a2x -d manpage -f manpage $<
 
+clean:
+	$(RM) doc/git-remote-hg.1
+
 D = $(DESTDIR)
 
-install:
-	install -D -m 755 git-remote-hg \
-		$(D)$(prefix)/bin/git-remote-hg
+install: install-doc
+	install -D -m 755 git-remote-hg $(D)$(bindir)/git-remote-hg
 
 install-doc: doc
-	install -D -m 644 doc/git-remote-hg.1 \
-		$(D)$(prefix)/share/man/man1/git-remote-hg.1
+	install -D -m 644 doc/git-remote-hg.1 $(D)$(mandir)/git-remote-hg.1
 
-.PHONY: all test
+.PHONY: all test install install-doc clean
