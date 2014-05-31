@@ -109,8 +109,8 @@ Limitations of the remote-helpers' framework apply. In particular, these
 commands don't work:
 
 * `git push origin :branch-to-delete`
-* `git push origin old:new` (it will push 'old') (Git v2.0)
-* `git push --dry-run origin branch` (it will push) (Git v2.0)
+* `git push origin old:new` (it will push 'old') (patches available)
+* `git push --dry-run origin branch` (it will push) (patches available)
 
 == Other projects ==
 
