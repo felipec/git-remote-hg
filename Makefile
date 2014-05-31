@@ -18,7 +18,7 @@ clean:
 
 D = $(DESTDIR)
 
-install: install-doc
+install:
 	install -d -m 755 $(D)$(bindir)/
 	install -m 755 git-remote-hg $(D)$(bindir)/git-remote-hg
 
