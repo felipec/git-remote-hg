@@ -1266,7 +1266,11 @@ def main(args):
     filenodes = {}
     fake_bmark = None
     try:
-        hg_version = tuple(int(e) for e in util.version().split('.'))
+        version, _, extra = util.version().partition('+')
+        version = list(int(e) for e in version.split('.'))
+        if extra:
+            version[1] += 1
+        hg_version = tuple(version)
     except:
         hg_version = None
     dry_run = False
