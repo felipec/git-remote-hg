@@ -809,8 +809,12 @@ def parse_commit(parser):
         is_exec = of['mode'] == 'x'
         is_link = of['mode'] == 'l'
         rename = of.get('rename', None)
-        return context.memfilectx(f, of['data'],
-                is_link, is_exec, rename)
+        if check_version(3, 1):
+            return context.memfilectx(repo, f, of['data'],
+                    is_link, is_exec, rename)
+        else:
+            return context.memfilectx(f, of['data'],
+                    is_link, is_exec, rename)
 
     repo = parser.repo
 
@@ -913,7 +917,10 @@ def write_tag(repo, tag, node, msg, author):
         except error.ManifestLookupError:
             data = ""
         content = data + "%s %s\n" % (node, tag)
-        return context.memfilectx(f, content, False, False, None)
+        if check_version(3, 1):
+            return context.memfilectx(repo, f, content, False, False, None)
+        else:
+            return context.memfilectx(f, content, False, False, None)
 
     p1 = tip.hex()
     p2 = '0' * 40
