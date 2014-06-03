@@ -115,7 +115,6 @@ setup () {
 	debugrawcommit = -d "0 0"
 	tag = -d "0 0"
 	[extensions]
-	hgext.bookmarks =
 	$hggit =
 	graphlog =
 	EOF
