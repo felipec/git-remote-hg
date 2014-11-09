@@ -430,7 +430,12 @@ def get_repo(url, alias):
             peer = hg.peer(repo.ui, {}, url)
         except:
             die('Repository error')
-        repo.pull(peer, heads=None, force=True)
+
+        if check_version(3, 2):
+            from mercurial import exchange
+            exchange.pull(repo, peer, heads=None, force=True)
+        else:
+            repo.pull(peer, heads=None, force=True)
 
         updatebookmarks(repo, peer)
 
@@ -803,7 +808,11 @@ def parse_commit(parser):
     def getfilectx(repo, memctx, f):
         of = files[f]
         if 'deleted' in of:
-            raise IOError
+            # the file is not available anymore - was deleted
+            if check_version(3, 2):
+                return None
+            else:
+                raise IOError
         if 'ctx' in of:
             return of['ctx']
         is_exec = of['mode'] == 'x'
@@ -1036,7 +1045,9 @@ def push_unsafe(repo, remote, parsed_refs, p_revs):
     if not checkheads(repo, remote, p_revs):
         return None
 
-    if check_version(3, 0):
+    if check_version(3, 2):
+        cg = changegroup.getchangegroup(repo, 'push', heads=list(p_revs), common=common)
+    elif check_version(3, 0):
         cg = changegroup.getbundle(repo, 'push', heads=list(p_revs), common=common)
     else:
         cg = repo.getbundle('push', heads=list(p_revs), common=common)
