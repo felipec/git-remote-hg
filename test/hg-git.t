@@ -472,7 +472,7 @@ test_expect_success 'hg author' '
 	test_cmp git-log-hg git-log-git
 '
 
-test_expect_success 'hg branch' '
+test_expect_failure 'hg branch' '
 	test_when_finished "rm -rf gitrepo* hgrepo*" &&
 
 	for x in hg git
