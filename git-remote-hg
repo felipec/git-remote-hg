@@ -391,7 +391,10 @@ def get_repo(url, alias):
     extensions.loadall(myui)
 
     if hg.islocal(url) and not os.environ.get('GIT_REMOTE_HG_TEST_REMOTE'):
-        repo = hg.repository(myui, url)
+        try:
+          repo = hg.repository(myui, url)
+        except error.RepoError, e:
+          die("Can't connect to hg repo: %s.\n(Is it already git?)", e)
         if not os.path.exists(dirname):
             os.makedirs(dirname)
     else:
