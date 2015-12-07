@@ -1052,7 +1052,7 @@ test_expect_success 'push annotated tag' '
 	test_cmp expected actual
 '
 
-test_expect_failure 'timezone issues with negative offsets' '
+test_expect_success 'timezone issues with negative offsets' '
 	test_when_finished "rm -rf hgrepo gitrepo1 gitrepo2" &&
 
 	hg init hgrepo &&

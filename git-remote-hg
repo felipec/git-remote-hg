@@ -72,12 +72,14 @@ def gitmode(flags):
     return 'l' in flags and '120000' or 'x' in flags and '100755' or '100644'
 
 def gittz(tz):
-    return '%+03d%02d' % (-tz / 3600, -tz % 3600 / 60)
+    sign = 1 if tz < 0 else -1
+    return '%+03d%02d' % (sign * (abs(tz) / 3600), abs(tz) % 3600 / 60)
 
 def hgtz(tz):
     tz = int(tz)
-    tz = ((tz / 100) * 3600) + ((tz % 100) * 60)
-    return -tz
+    sign = 1 if tz < 0 else -1
+    tz = ((abs(tz) / 100) * 3600) + ((abs(tz) % 100) * 60)
+    return sign * tz
 
 def hgmode(mode):
     m = { '100755': 'x', '120000': 'l' }

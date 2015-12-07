@@ -240,7 +240,7 @@ test_expect_success 'hg tags' '
 	test_cmp expected actual
 '
 
-test_expect_failure 'test timezones' '
+test_expect_success 'test timezones' '
 	test_when_finished "rm -rf gitrepo* hgrepo*" &&
 
 	(
