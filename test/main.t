@@ -470,7 +470,7 @@ rm -rf hgrepo
 test_expect_success 'fetch special filenames' '
 	test_when_finished "rm -rf hgrepo gitrepo && LC_ALL=C" &&
 
-	LC_ALL=C.UTF-8
+	LC_ALL=en_US.UTF-8
 	export LC_ALL
 
 	(
@@ -503,7 +503,7 @@ test_expect_success 'push special filenames' '
 
 	mkdir -p tmp && cd tmp &&
 
-	LC_ALL=C.UTF-8
+	LC_ALL=en_US.UTF-8
 	export LC_ALL
 
 	(
