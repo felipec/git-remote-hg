@@ -813,7 +813,18 @@ def parse_commit(parser):
             else:
                 raise IOError
         if 'ctx' in of:
-            return of['ctx']
+            if mode == 'hg':
+                ctx = of['ctx']
+                is_exec = ctx.isexec()
+                is_link = ctx.islink()
+                if check_version(3, 1):
+                    return context.memfilectx(repo, f, ctx.data(),
+                            is_link, is_exec)
+                else:
+                    return context.memfilectx(f, ctx.data(),
+                            is_link, is_exec)
+            else:
+                return of['ctx']
         is_exec = of['mode'] == 'x'
         is_link = of['mode'] == 'l'
         rename = of.get('rename', None)
