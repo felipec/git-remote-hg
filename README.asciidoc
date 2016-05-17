@@ -15,6 +15,16 @@ chmod +x ~/bin/git-remote-hg
 
 That's it :)
 
+
+== Requirements ==
+
+The script depends on the Python Mercurial package which can be installed as follows:
+
+--------------------------------------
+% pip install --user mercurial
+--------------------------------------
+
+
 == Configuration ==
 
 If you want to see Mercurial revisions as Git commit notes:
