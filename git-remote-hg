@@ -373,10 +373,23 @@ def updatebookmarks(repo, peer):
     for k, v in remotemarks.iteritems():
         localmarks[k] = hgbin(v)
 
-    if hasattr(localmarks, 'write'):
-        localmarks.write()
+    if check_version(3, 6):
+        lock = tr = None
+        try:
+            lock = repo.lock()
+            tr = repo.transaction('bookmark')
+            localmarks.recordchange(tr)
+            tr.close()
+        finally:
+            if tr is not None:
+                tr.release()
+            if lock is not None:
+                lock.release()
     else:
-        bookmarks.write(repo)
+        if hasattr(localmarks, 'write'):
+            localmarks.write()
+        else:
+            bookmarks.write(repo)
 
 def get_repo(url, alias):
     global peer
