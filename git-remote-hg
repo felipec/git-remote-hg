@@ -110,6 +110,12 @@ def get_config_bool(config, default=False):
     else:
         return default
 
+def rev_parse(rev):
+    cmd = ['git', 'rev-parse', '--verify', '-q', rev]
+    process = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+    output, _ = process.communicate()
+    return output
+
 class Marks:
 
     def __init__(self, path, repo):
@@ -602,8 +608,11 @@ def export_ref(repo, name, kind, head):
         desc = "Notes for %s\n" % (name)
         print "data %d" % (len(desc))
         print desc
-        if marks.last_note:
-            print "from :%u" % marks.last_note
+        # continue incrementally on current notes branch (whenever possible)
+        # to avoid wiping out present content upon fetch of new repo
+        current_note = rev_parse(ref)
+        if current_note:
+            print 'from %s^0' % (ref)
 
         for rev in pending_revs:
             notes.add(rev)
