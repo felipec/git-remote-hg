@@ -853,6 +853,31 @@ test_expect_failure 'push updates notes' '
 	test_cmp expected actual
 '
 
+test_expect_success 'push bookmark without changesets' '
+	test_when_finished "rm -rf hgrepo gitrepo" &&
+
+	(
+	hg init hgrepo &&
+	cd hgrepo &&
+	echo one > content &&
+	hg add content &&
+	hg commit -m one
+	) &&
+
+	git clone "hg::hgrepo" gitrepo &&
+
+	(
+	cd gitrepo &&
+	echo two > content &&
+	git commit -a -m two &&
+	git push origin master &&
+	git branch feature-a &&
+	git push origin feature-a
+	) &&
+
+	check_bookmark hgrepo feature-a two
+'
+
 test_expect_unstable 'pull tags' '
 	test_when_finished "rm -rf hgrepo gitrepo" &&
 
