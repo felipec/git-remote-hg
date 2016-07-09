@@ -1083,13 +1083,17 @@ def push_unsafe(repo, remote, parsed_refs, p_revs):
     fci = discovery.findcommonincoming
     commoninc = fci(repo, remote, force=force)
     common, _, remoteheads = commoninc
+    fco = discovery.findcommonoutgoing
+    outgoing = fco(repo, remote, onlyheads=list(p_revs), commoninc=commoninc, force=force)
 
     if not checkheads(repo, remote, p_revs):
-        return None
+        return False
+
+    if not outgoing.missing:
+        # Nothing to push
+        return True
 
     if check_version(4, 0):
-        from mercurial import exchange
-        outgoing = exchange._computeoutgoing(repo, list(p_revs), common)
         if check_version(4, 4):
             cg = changegroup.makechangegroup(repo, outgoing, '01', 'push')
         else:
