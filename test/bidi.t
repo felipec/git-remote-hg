@@ -174,6 +174,38 @@ test_expect_success 'git tags' '
 	test_cmp expected actual
 '
 
+test_expect_success 'git submodules' '
+	test_when_finished "rm -rf gitrepo* hgrepo*" &&
+
+	(
+	git init -q gitrepo &&
+	cd gitrepo &&
+	echo alpha > alpha &&
+	git add alpha &&
+	git commit -m "add alpha" &&
+	git tag alpha &&
+
+    git init -q subrepo &&
+    cd subrepo
+	echo beta > beta &&
+	git add beta &&
+	git commit -m "add beta" &&
+
+	cd .. &&
+	git submodule add ./subrepo ext &&
+	git commit -m "add submodule"
+	) &&
+
+	hg_clone gitrepo hgrepo &&
+	git_clone hgrepo gitrepo2 &&
+	hg_clone gitrepo2 hgrepo2 &&
+
+	hg_log hgrepo > expected &&
+	hg_log hgrepo2 > actual &&
+
+	test_cmp expected actual
+'
+
 test_expect_success 'hg branch' '
 	test_when_finished "rm -rf gitrepo* hgrepo*" &&
 
