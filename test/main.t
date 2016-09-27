@@ -1052,4 +1052,25 @@ test_expect_success 'push annotated tag' '
 	test_cmp expected actual
 '
 
+test_expect_failure 'timezone issues with negative offsets' '
+	test_when_finished "rm -rf hgrepo gitrepo1 gitrepo2" &&
+
+	hg init hgrepo &&
+
+	(
+	git clone "hg::hgrepo" gitrepo1 &&
+	cd gitrepo1 &&
+	echo two >> content &&
+	git add content &&
+	git commit -m two --date="2016-09-26 00:00:00 -0230" &&
+	git push
+	) &&
+
+	git clone "hg::hgrepo" gitrepo2 &&
+
+	git --git-dir=gitrepo1/.git log -1 --format="%ai" > expected &&
+	git --git-dir=gitrepo2/.git log -1 --format="%ai" > actual &&
+	test_cmp expected actual
+'
+
 test_done
