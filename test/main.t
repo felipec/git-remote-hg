@@ -1024,4 +1024,38 @@ test_expect_success 'clone replace directory with a file' '
 	check_files gitrepo "dir_or_file"
 '
 
+test_expect_success 'timezone issues' '
+	test_when_finished "rm -rf hgrepo gitrepo1 gitrepo2" &&
+
+	(
+		hg init hgrepo &&
+		cd hgrepo &&
+		echo one > content &&
+		hg add content &&
+		hg commit -m one
+	) &&
+
+	echo "Tue, 27 Sep 2016 00:00:00 -0230" > expected_timestamp &&
+
+	(
+		git clone "hg::hgrepo" gitrepo1 &&
+		cd gitrepo1 &&
+		echo two >> content &&
+		git add content &&
+		git commit -m two --date="$(cat ../expected_timestamp)" &&
+		git push &&
+		cd ..
+	) &&
+
+	git clone "hg::hgrepo" gitrepo2 &&
+
+	(
+		cd gitrepo2 &&
+		git log -1 --format="%aD" > ../actual_timestamp &&
+		cd ..
+	) &&
+
+	test_cmp expected_timestamp actual_timestamp
+'
+
 test_done
