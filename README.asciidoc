@@ -9,7 +9,7 @@ git clone "hg::http://selenic.com/repo/hello"
 To enable this, simply add the 'git-remote-hg' script anywhere in your `$PATH`:
 
 --------------------------------------
-wget https://raw.github.com/felipec/git-remote-hg/master/git-remote-hg -O ~/bin/git-remote-hg
+curl -o ~/bin/git-remote-hg https://raw.githubusercontent.com/felipec/git-remote-hg/master/git-remote-hg
 chmod +x ~/bin/git-remote-hg
 --------------------------------------
 
