@@ -528,7 +528,7 @@ test_expect_code() {
 
 # Public: Compare two files to see if expected output matches actual output.
 #
-# The TEST_CMP variable defines the command used for the comparision; it
+# The TEST_CMP variable defines the command used for the comparison; it
 # defaults to "diff -u". Only when the test script was started with --verbose,
 # will the command's output, the diff, be printed to the standard output.
 #
