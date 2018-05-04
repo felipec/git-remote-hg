@@ -744,19 +744,19 @@ def do_import(parser):
             tag = ref[len('refs/tags/'):]
             export_tag(repo, tag)
 
-        parser.next()
+        next(parser)
 
     encoding.encoding = tmp
 
     print('done')
 
 def parse_blob(parser):
-    parser.next()
+    next(parser)
     mark = parser.get_mark()
-    parser.next()
+    next(parser)
     data = parser.get_data()
     blob_marks[mark] = data
-    parser.next()
+    next(parser)
 
 def get_merge_files(repo, p1, p2, files):
     for e in repo[p1].files():
@@ -775,22 +775,22 @@ def parse_commit(parser):
     from_mark = merge_mark = None
 
     ref = parser[1]
-    parser.next()
+    next(parser)
 
     commit_mark = parser.get_mark()
-    parser.next()
+    next(parser)
     author = parser.get_author()
-    parser.next()
+    next(parser)
     committer = parser.get_author()
-    parser.next()
+    next(parser)
     data = parser.get_data()
-    parser.next()
+    next(parser)
     if parser.check('from'):
         from_mark = parser.get_mark()
-        parser.next()
+        next(parser)
     if parser.check('merge'):
         merge_mark = parser.get_mark()
-        parser.next()
+        next(parser)
         if parser.check('merge'):
             die('octopus merges are not supported yet')
 
@@ -909,7 +909,7 @@ def parse_commit(parser):
 
 def parse_reset(parser):
     ref = parser[1]
-    parser.next()
+    next(parser)
     # ugh
     if parser.check('commit'):
         parse_commit(parser)
@@ -917,7 +917,7 @@ def parse_reset(parser):
     if not parser.check('from'):
         return
     from_mark = parser.get_mark()
-    parser.next()
+    next(parser)
 
     try:
         rev = mark_to_rev(from_mark)
@@ -927,13 +927,13 @@ def parse_reset(parser):
 
 def parse_tag(parser):
     name = parser[1]
-    parser.next()
+    next(parser)
     from_mark = parser.get_mark()
-    parser.next()
+    next(parser)
     tagger = parser.get_author()
-    parser.next()
+    next(parser)
     data = parser.get_data()
-    parser.next()
+    next(parser)
 
     parsed_tags[name] = (tagger, data)
 
@@ -1124,7 +1124,7 @@ def do_export(parser):
     p_bmarks = []
     p_revs = {}
 
-    parser.next()
+    next(parser)
 
     for line in parser.each_block('done'):
         if parser.check('blob'):
