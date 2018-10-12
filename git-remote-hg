@@ -84,11 +84,20 @@ def hghex(n):
 def hgbin(n):
     return node.bin(n)
 
+def _rep_start_end(s, old, new):
+    while s.startswith(old):
+        s = new + s[len(old):]
+    while s.endswith(old):
+        s = s[:-len(old)] + new
+    return s
+
 def hgref(ref):
-    return ref.replace('___', ' ')
+    backwards_compat = ref.replace('___', ' ')
+    return _rep_start_end(urllib.unquote(backwards_compat), '.', '%2E')
 
 def gitref(ref):
-    return ref.replace(' ', '___')
+    backwards_compat = ref.replace(' ', '___')
+    return _rep_start_end(urllib.quote(backwards_compat), '%2E', '.')
 
 def check_version(*check):
     if not hg_version:
