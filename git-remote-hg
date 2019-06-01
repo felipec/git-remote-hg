@@ -1207,7 +1207,11 @@ def do_export(parser):
                 tagnode, branch = write_tag(parser.repo, tag, node, msg, author)
                 p_revs[tagnode] = 'refs/heads/branches/' + gitref(branch)
             else:
-                fp = parser.repo.opener('localtags', 'a')
+                if check_version(2, 4):
+                    vfs = parser.repo.vfs
+                else:
+                    vfs = parser.repo.opener
+                fp = vfs('localtags', 'a')
                 fp.write('%s %s\n' % (node, tag))
                 fp.close()
             p_revs[bnode] = ref
