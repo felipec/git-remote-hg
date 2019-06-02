@@ -108,6 +108,8 @@ setup () {
 	[extensions]
 	$hggit =
 	graphlog =
+	[git]
+	debugextrainmessage = 1
 	EOF
 	git config --global receive.denycurrentbranch warn
 	git config --global remote-hg.hg-git-compat true
