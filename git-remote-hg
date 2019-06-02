@@ -619,7 +619,8 @@ def export_ref(repo, name, kind, head):
     marks.set_tip(ename, head.hex())
 
 def export_tag(repo, tag):
-    export_ref(repo, tag, 'tags', repo[hgref(tag)])
+    node = repo.tags().get(hgref(tag))
+    export_ref(repo, tag, 'tags', repo[node])
 
 def export_bookmark(repo, bmark):
     head = bmarks[hgref(bmark)]
