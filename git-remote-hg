@@ -1078,7 +1078,10 @@ def push_unsafe(repo, remote, parsed_refs, p_revs):
     if check_version(4, 0):
         from mercurial import exchange
         outgoing = exchange._computeoutgoing(repo, list(p_revs), common)
-        cg = changegroup.getchangegroup(repo, 'push', outgoing)
+        if check_version(4, 4):
+            cg = changegroup.makechangegroup(repo, outgoing, '01', 'push')
+        else:
+            cg = changegroup.getchangegroup(repo, 'push', outgoing)
     elif check_version(3, 2):
         cg = changegroup.getchangegroup(repo, 'push', heads=list(p_revs), common=common)
     elif check_version(3, 0):
