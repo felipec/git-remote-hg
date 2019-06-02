@@ -999,7 +999,12 @@ def checkheads_bmark(repo, ref, ctx):
         print "error %s unknown" % ref
         return False
 
-    if not repo.changelog.descendant(ctx_old.rev(), ctx_new.rev()):
+    if check_version(4, 7):
+        isancestorrev = repo.changelog.isancestorrev
+    else:
+        isancestorrev = repo.changelog.descendant
+
+    if not isancestorrev(ctx_old.rev(), ctx_new.rev()):
         if force_push:
             print "ok %s forced update" % ref
         else:
