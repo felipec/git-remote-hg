@@ -826,7 +826,8 @@ def parse_commit(parser):
             else:
                 raise IOError
         if 'ctx' in of:
-            if mode == 'hg':
+            if mode == 'hg' and check_version(3, 2):
+                # force the creation of a new filelog
                 ctx = of['ctx']
                 is_exec = ctx.isexec()
                 is_link = ctx.islink()
