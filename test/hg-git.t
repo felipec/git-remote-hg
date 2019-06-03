@@ -34,15 +34,6 @@ else
 	test_done
 fi
 
-hg_version=$(python2 -c 'from mercurial import util; print util.version()')
-
-case $hg_version in
-3.0*+*)
-	skip_all='skipping remote-hg tests; unsuported version of hg by hg-git'
-	test_done
-	;;
-esac
-
 # clone to a git repo with git
 git_clone_git () {
 	git clone -q "hg::$1" $2 &&
