@@ -1,0 +1,22 @@
+diff --git a/hggit/git_handler.py b/hggit/git_handler.py
+--- a/hggit/git_handler.py
++++ b/hggit/git_handler.py
+@@ -693,6 +693,8 @@
+     def import_git_commit(self, commit):
+         self.ui.debug(_("importing: %s\n") % commit.id)
+ 
++        extra_in_message = self.ui.configbool('git', 'debugextrainmessage', False)
++
+         detect_renames = False
+         (strip_message, hg_renames,
+          hg_branch, extra) = git2hg.extract_hg_metadata(
+@@ -703,7 +705,8 @@
+             # renames detected from Git. This is because we export an extra
+             # 'HG:rename-source' Git parameter when this isn't set, which will
+             # break bidirectionality.
+-            extra['hg-git-rename-source'] = 'git'
++            if not extra_in_message:
++                extra['hg-git-rename-source'] = 'git'
+         else:
+             renames = hg_renames
+ 
