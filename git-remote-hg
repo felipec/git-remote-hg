@@ -772,7 +772,9 @@ def c_style_unescape(string):
     return string
 
 def make_memfilectx(repo, changectx, path, data, islink=False, isexec=False, copied=None):
-    if check_version(3, 1):
+    if check_version(4, 5):
+        return context.memfilectx(repo, changectx, path, data, islink, isexec, copied)
+    elif check_version(3, 1):
         return context.memfilectx(repo, path, data, islink, isexec, copied)
     else:
         return context.memfilectx(path, data, islink, isexec, copied)
