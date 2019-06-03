@@ -1024,4 +1024,32 @@ test_expect_success 'clone replace directory with a file' '
 	check_files gitrepo "dir_or_file"
 '
 
+test_expect_success 'push annotated tag' '
+	test_when_finished "rm -rf hgrepo gitrepo" &&
+
+	(
+	hg init hgrepo &&
+	cd hgrepo &&
+	echo one > content &&
+	hg add content &&
+	hg commit -m one
+	) &&
+
+	(
+	git clone "hg::hgrepo" gitrepo &&
+	cd gitrepo &&
+	git tag -m "Version 1.0" v1.0 &&
+	git push --tags
+	) &&
+
+	cat > expected <<-\EOF &&
+	tip:Version 1.0:C O Mitter <committer@example.com>
+	v1.0:one:H G Wells <wells@example.com>
+	EOF
+
+	hg -R hgrepo log --template "{tags}:{desc}:{author}\n" > actual &&
+
+	test_cmp expected actual
+'
+
 test_done
