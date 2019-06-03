@@ -1,0 +1,15 @@
+diff --git a/setup.py b/setup.py
+--- a/setup.py
++++ b/setup.py
+@@ -181,7 +181,10 @@
+     # error 0xc0150004. See: http://bugs.python.org/issue3440
+     env['SystemRoot'] = os.environ['SystemRoot']
+ 
+-if os.path.isdir('.hg'):
++if os.path.exists('.hg_force_version'):
++    with open('.hg_force_version') as f:
++        version = f.read().rstrip('\n')
++elif os.path.isdir('.hg'):
+     cmd = [sys.executable, 'hg', 'log', '-r', '.', '--template', '{tags}\n']
+     numerictags = [t for t in runhg(cmd, env).split() if t[0].isdigit()]
+     hgid = runhg([sys.executable, 'hg', 'id', '-i'], env).strip()
