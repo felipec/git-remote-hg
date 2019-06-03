@@ -376,13 +376,16 @@ def updatebookmarks(repo, peer):
     try:
         wlock = repo.wlock()
         tr = repo.transaction('bookmark')
-        localmarks.update(changes)
-        if check_version(3, 2):
-            localmarks.recordchange(tr)
-        elif check_version(2, 5):
-            localmarks.write()
+        if check_version(4, 3):
+            localmarks.applychanges(repo, tr, changes.items())
         else:
-            bookmarks.write(repo)
+            localmarks.update(changes)
+            if check_version(3, 2):
+                localmarks.recordchange(tr)
+            elif check_version(2, 5):
+                localmarks.write()
+            else:
+                bookmarks.write(repo)
         tr.close()
     finally:
         tr.release()
