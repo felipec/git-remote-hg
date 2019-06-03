@@ -844,7 +844,7 @@ test_expect_failure 'push updates notes' '
 	(
 	cd gitrepo &&
 	echo two > content &&
-	git commit -a -m two
+	git commit -a -m two &&
 	git push
 	) &&
 
@@ -898,7 +898,7 @@ test_expect_success 'push merged named branch' '
 	git push
 	) &&
 
-	cat > expected <<-EOF
+	cat > expected <<-EOF &&
 	Merge
 	three
 	two
@@ -939,7 +939,7 @@ test_expect_success 'push tag different branch' '
 	cd hgrepo &&
 	echo one > content &&
 	hg add content &&
-	hg commit -m one
+	hg commit -m one &&
 	hg branch feature &&
 	echo two > content &&
 	hg commit -m two
