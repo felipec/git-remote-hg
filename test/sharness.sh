@@ -37,6 +37,13 @@ else
 fi
 export SHARNESS_TEST_DIRECTORY
 
+if test -z "$SHARNESS_TEST_OUTPUT_DIRECTORY"
+then
+	# Similarly, override this to store the test-results subdir
+	# elsewhere
+	SHARNESS_TEST_OUTPUT_DIRECTORY=$SHARNESS_TEST_DIRECTORY
+fi
+
 #  Reset TERM to original terminal if found, otherwise save original TERM
 [ "x" = "x$SHARNESS_ORIG_TERM" ] &&
 		SHARNESS_ORIG_TERM="$TERM" ||
@@ -55,8 +62,8 @@ done,*)
 	# do not redirect again
 	;;
 *' --tee '*|*' --verbose-log '*)
-	mkdir -p "$SHARNESS_TEST_DIRECTORY/test-results"
-	BASE="$SHARNESS_TEST_DIRECTORY/test-results/$(basename "$0" ".$SHARNESS_TEST_EXTENSION")"
+	mkdir -p "$SHARNESS_TEST_OUTPUT_DIRECTORY/test-results"
+	BASE="$SHARNESS_TEST_OUTPUT_DIRECTORY/test-results/$(basename "$0" ".$SHARNESS_TEST_EXTENSION")"
 
 	# Make this filename available to the sub-process in case it is using
 	# --verbose-log.
@@ -820,7 +827,7 @@ test_done() {
 	EXIT_OK=t
 
 	if test -z "$HARNESS_ACTIVE"; then
-		test_results_dir="$SHARNESS_TEST_DIRECTORY/test-results"
+		test_results_dir="$SHARNESS_TEST_OUTPUT_DIRECTORY/test-results"
 		mkdir -p "$test_results_dir"
 		test_results_path="$test_results_dir/$this_test.$$.counts"
 
@@ -899,7 +906,7 @@ SHARNESS_TRASH_DIRECTORY="trash directory.$(basename "$SHARNESS_TEST_FILE" ".$SH
 test -n "$root" && SHARNESS_TRASH_DIRECTORY="$root/$SHARNESS_TRASH_DIRECTORY"
 case "$SHARNESS_TRASH_DIRECTORY" in
 /*) ;; # absolute path is good
- *) SHARNESS_TRASH_DIRECTORY="$SHARNESS_TEST_DIRECTORY/$SHARNESS_TRASH_DIRECTORY" ;;
+ *) SHARNESS_TRASH_DIRECTORY="$SHARNESS_TEST_OUTPUT_DIRECTORY/$SHARNESS_TRASH_DIRECTORY" ;;
 esac
 test "$debug" = "t" || remove_trash="$SHARNESS_TRASH_DIRECTORY"
 rm -rf "$SHARNESS_TRASH_DIRECTORY" || {
