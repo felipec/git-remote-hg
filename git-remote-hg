@@ -370,26 +370,23 @@ def updatebookmarks(repo, peer):
     if not remotemarks:
         return
 
-    for k, v in remotemarks.iteritems():
-        localmarks[k] = hgbin(v)
+    changes = { k: hgbin(v) for k, v in remotemarks.iteritems() }
 
-    if check_version(3, 6):
-        lock = tr = None
-        try:
-            lock = repo.lock()
-            tr = repo.transaction('bookmark')
+    wlock = tr = None
+    try:
+        wlock = repo.wlock()
+        tr = repo.transaction('bookmark')
+        localmarks.update(changes)
+        if check_version(3, 2):
             localmarks.recordchange(tr)
-            tr.close()
-        finally:
-            if tr is not None:
-                tr.release()
-            if lock is not None:
-                lock.release()
-    else:
-        if hasattr(localmarks, 'write'):
+        elif check_version(2, 5):
             localmarks.write()
         else:
             bookmarks.write(repo)
+        tr.close()
+    finally:
+        tr.release()
+        wlock.release()
 
 def get_repo(url, alias):
     global peer
