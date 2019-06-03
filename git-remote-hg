@@ -936,6 +936,12 @@ def parse_tag(parser):
     data = parser.get_data()
     parser.next()
 
+    try:
+        rev = mark_to_rev(from_mark)
+    except KeyError:
+        rev = None
+    parsed_refs['refs/tags/' + name] = rev
+
     parsed_tags[name] = (tagger, data)
 
 def write_tag(repo, tag, node, msg, author):
