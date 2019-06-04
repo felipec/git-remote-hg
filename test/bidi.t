@@ -240,4 +240,42 @@ test_expect_success 'hg tags' '
 	test_cmp expected actual
 '
 
+test_expect_failure 'test timezones' '
+	test_when_finished "rm -rf gitrepo* hgrepo*" &&
+
+	(
+	git init -q gitrepo &&
+	cd gitrepo &&
+
+	echo alpha > alpha &&
+	git add alpha &&
+	git commit -m "add alpha" --date="2007-01-01 00:00:00 +0000" &&
+
+	echo beta > beta &&
+	git add beta &&
+	git commit -m "add beta" --date="2007-01-01 00:00:00 +0100" &&
+
+	echo gamma > gamma &&
+	git add gamma &&
+	git commit -m "add gamma" --date="2007-01-01 00:00:00 -0100" &&
+
+	echo delta > delta &&
+	git add delta &&
+	git commit -m "add delta" --date="2007-01-01 00:00:00 +0130" &&
+
+	echo epsilon > epsilon &&
+	git add epsilon &&
+	git commit -m "add epsilon" --date="2007-01-01 00:00:00 -0130"
+	) &&
+
+	hg_clone gitrepo hgrepo &&
+	git_clone hgrepo gitrepo2 &&
+	hg_clone gitrepo2 hgrepo2 &&
+
+	hg_log hgrepo > expected &&
+	hg_log hgrepo2 > actual &&
+
+	test_cmp expected actual
+'
+
 test_done
