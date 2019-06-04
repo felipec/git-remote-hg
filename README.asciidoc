@@ -107,12 +107,7 @@ Closed branches are not supported; they are not shown and you can't close or
 reopen. Additionally in certain rare situations a synchronization issue can
 occur (https://github.com/felipec/git/issues/65[Bug #65]).
 
-Limitations of the remote-helpers' framework apply. In particular, these
-commands don't work:
-
-* `git push origin :branch-to-delete`
-* `git push origin old:new` (it will push 'old') (patches available)
-* `git push --dry-run origin branch` (it will push) (patches available)
+Limitations of the remote-helpers' framework apply.
 
 == Other projects ==
 
