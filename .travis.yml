@@ -15,6 +15,7 @@ script:
 
 matrix:
   include:
+    - env:
     - env: HG_VERSION=dev
     - env: HG_VERSION=5.0
     - env: HG_VERSION=4.9
