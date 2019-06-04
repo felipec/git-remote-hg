@@ -1,0 +1,297 @@
+#!/usr/bin/env ruby
+
+#
+# Copyright (c) 2019 Felipe Contreras
+#
+# This script runs the tests for all versions of the components:
+#   hg, hggit and dulwich
+#
+# You can run it without arguments, in which case it reads the file
+# 'versions.txt' and executes all those checks.
+#
+# Or you can pass the versions to check manually, like:
+#
+#   ./check-versions hg:4.7 hggit:0.8.12 dulwich:0.19.7
+#
+# Or you can pass just the hg version, the other versions are fetched from
+# 'versions.txt':
+#
+#   ./check-versions hg:5.0
+#
+
+require 'fileutils'
+
+$tests = %w[main.t bidi.t hg-git.t]
+$workdir = "#{Dir.home}/.cache/git-remote-hg"
+$builddir = "/tmp/git-remote-hg-build"
+$testoutdir = "/tmp/git-remote-hg-tests"
+
+QUIET, LOW, HIGH = (1..3).to_a
+$verbosity = LOW
+
+# Util {{{1
+
+def section(text)
+  puts [nil, text, '=' * text.size]
+end
+
+def title(text)
+  puts [nil, text, '-' * text.size] unless $verbosity < HIGH
+end
+
+def run_cmd(cmd, fatal: true)
+  puts cmd.join(' ') unless $verbosity < HIGH
+  result = system(*cmd)
+  unless result or not fatal
+    STDERR.puts "Failed to run command '%s'" % cmd.join(' ')
+    exit -1
+  end
+  result
+end
+
+def check_version(a, b)
+  return true if a == '@'
+  a = a.split('.').map(&:to_i)
+  b = b.split('.').map(&:to_i)
+  (a <=> b) >= 0
+end
+
+# Component {{{1
+
+class Component
+
+  attr_reader :id
+
+  def initialize(id, url, kind: nil, **args)
+    @id = id
+    @url = url
+    @kind = kind || (url.start_with?('git') ? :git : :hg)
+    @tool = @kind.to_s
+    @checkout_fix = args[:checkout_fix]
+    @version_format = args[:version_format]
+  end
+
+  def dir
+    "#{$workdir}/#{@id}"
+  end
+
+  def get_version(version)
+    return @kind == :hg ? 'tip' : '@' if version == '@'
+    @version_format ? @version_format % version : version
+  end
+
+  def clone
+    run_cmd [@tool, 'clone', '-q', @url, dir]
+  end
+
+  def checkout(version)
+    Dir.chdir(dir) do
+      case @kind
+      when :hg
+        cmd = %w[update --clean]
+      when :git
+        cmd = %w[reset --hard]
+      else
+        cmd = %w[checkout]
+      end
+      run_cmd [@tool] + cmd + ['-q', get_version(version)]
+      @checkout_fix.call(version) if @checkout_fix
+    end
+  end
+
+  def build
+    Dir.chdir(dir) do
+      targets = %w[build_py build_ext].map { |e| [e, '--build-lib', "#{$builddir}/python"] }
+      run_cmd %w[python2 setup.py --quiet] + targets.flatten
+    end
+  end
+
+end
+
+# Functions {{{1
+
+def setup
+  dirs = %w[bin python]
+  FileUtils.mkdir_p(dirs.map { |e| "#{$builddir}/#{e}" })
+  FileUtils.mkdir_p($workdir)
+
+  $components.each do |id, component|
+    next if File.exists?(component.dir)
+
+    if $verbosity < HIGH
+      puts "Cloning #{component.id}"
+    else
+      title "Cloning #{component.id}"
+    end
+    component.clone
+  end
+end
+
+def test_env(paths: nil)
+  old = ENV.to_h
+  paths.each do |id, path|
+    name = id.to_s
+    ENV[name] = "#{path}:#{ENV[name]}"
+  end
+  r = yield
+  ENV.replace(old)
+  return r
+end
+
+def run_tests(tests)
+  title "Running tests"
+
+  Dir.chdir("#{__dir__}/../test") do
+    case $verbosity
+    when QUIET
+      tests_opt = tests.join(' ')
+      cmd = "prove -q #{tests_opt} :: -i"
+    when LOW
+      tests_opt = "T='%s'" % tests.join(' ')
+      cmd = "make -j1 #{tests_opt}"
+    else
+      tests_opt = "T='%s'" % tests.join(' ')
+      cmd = "TEST_OPTS='-v -i' make -j1 #{tests_opt}"
+    end
+    system(cmd)
+  end
+end
+
+def versions_to_s(versions)
+  versions.map { |k,v| "#{k}:#{v}" }.join(' ')
+end
+
+def versions_from_args(args)
+  args.map { |e| k, v = e.split(':'); [k.to_sym, v] }.to_h
+end
+
+def versions_from_s(str)
+  versions_from_args(str.split(' '))
+end
+
+def check(versions)
+  section versions_to_s(versions)
+
+  versions.each do |id, version|
+    component = $components[id]
+    next unless component
+
+    title "Checking out #{component.id} #{version}"
+    component.checkout(version)
+
+    title "Building #{component.id}"
+    component.build
+  end
+
+  paths = {
+    PATH: "#{$builddir}/bin",
+    PYTHONPATH: "#{$builddir}/python",
+  }
+
+  test_env(paths: paths) do
+    ENV['SHARNESS_TEST_OUTPUT_DIRECTORY'] = $testoutdir
+    run_tests($tests)
+  end
+end
+
+# Add components {{{1
+
+$components = {}
+
+def add_component(id, url, **args)
+  $components[id] = Component.new(id, url, **args)
+end
+
+hg_checkout_fix = lambda do |version|
+  FileUtils.cp('hg', "#{$builddir}/bin/")
+
+  return if check_version(version, '4.3')
+
+  if run_cmd %W[hg import -q --no-commit #{__dir__}/hg_setup_hack_2.4.patch], fatal: false
+    File.write('.hg_force_version', "%s\n" % version)
+  else
+    File.write('mercurial/__version__.py', "version = \"%s\"\n" % version)
+  end
+end
+
+add_component(:hg, 'https://www.mercurial-scm.org/repo/hg', checkout_fix: hg_checkout_fix)
+
+hggit_checkout_fix = lambda do |version|
+  return unless check_version(version, '0.8.0')
+
+  run_cmd %W[hg import -q --no-commit #{__dir__}/hggit_rename_fix_0.8.0.patch], fatal: false
+end
+
+add_component(:hggit, 'https://bitbucket.org/durin42/hg-git', checkout_fix: hggit_checkout_fix)
+
+add_component(:dulwich, 'https://github.com/dulwich/dulwich.git', version_format: 'dulwich-%s', kind: :git)
+
+def load_checks(file)
+  file.each do |e|
+    e.chomp!
+    next if e.empty? or e.start_with?('#')
+    content, comment = e.split(' # ')
+    versions = versions_from_s(content)
+    $checks << versions
+  end
+end
+
+def store_results(file)
+  $results.each do |versions, result|
+    content = versions_to_s(versions)
+    comment = result ? 'OK' : 'FAIL'
+    file.puts '%s # %s' % [content, comment]
+  end
+end
+
+# Main {{{1
+
+setup
+
+$checks = []
+$results = []
+
+$versions = versions_from_args(ARGV)
+
+File.open("#{__dir__}/versions.txt") do |f|
+  load_checks(f)
+end
+
+if $versions.size == 1 and $versions.key?(:hg)
+  # mode 1
+  $verbosity = LOW
+
+  if ['@', nil].include?($versions[:hg])
+    versions = $checks.last
+    versions[:hg] = $versions[:hg] if $versions[:hg]
+  else
+    versions = $checks.find { |e| e[:hg] == $versions[:hg] }
+    exit 1 unless versions
+  end
+
+  exit check(versions) ? 0 : 1
+elsif not $versions.empty?
+  # mode 2
+  $verbosity = HIGH
+
+  exit check(versions) ? 0 : 1
+else
+  # mode 3
+  $verbosity = QUIET
+
+  at_exit do
+    File.open("#{__dir__}/results.txt", 'w') do |f|
+      store_results(f)
+    end
+  end
+
+  failures = 0
+
+  $checks.each do |versions|
+    result = check(versions)
+    failures += 1 unless result
+    $results << [versions, result]
+  end
+
+  exit 1 unless failures == 0
+end

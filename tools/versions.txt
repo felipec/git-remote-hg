@@ -1,0 +1,33 @@
+# vi: ft=ruby
+
+hg:2.4 hggit:0.4.0 dulwich:0.9.0 # 2013_02
+hg:2.5 hggit:0.4.0 dulwich:0.9.0 # 2013_02
+hg:2.6 hggit:0.4.0 dulwich:0.9.0 # 2013_02
+hg:2.7 hggit:0.4.0 dulwich:0.9.0 # 2013_02
+hg:2.8 hggit:0.4.0 dulwich:0.9.0 # 2013_02
+hg:2.9 hggit:0.4.0 dulwich:0.9.0 # 2013_02
+
+hg:3.0 hggit:0.7.0 dulwich:0.10.0 # 2014_11
+hg:3.1 hggit:0.7.0 dulwich:0.10.0 # 2014_11
+hg:3.2 hggit:0.7.0 dulwich:0.10.0 # 2014_11
+
+hg:3.3 hggit:0.8.4 dulwich:0.13.0 # 2016_01
+hg:3.4 hggit:0.8.4 dulwich:0.13.0 # 2016_01
+hg:3.5 hggit:0.8.4 dulwich:0.13.0 # 2016_01
+hg:3.6 hggit:0.8.4 dulwich:0.13.0 # 2016_01
+hg:3.7 hggit:0.8.4 dulwich:0.13.0 # 2016_01
+hg:3.8 hggit:0.8.4 dulwich:0.13.0 # 2016_01
+hg:3.9 hggit:0.8.4 dulwich:0.13.0 # 2016_01
+
+hg:4.0 hggit:0.8.10 dulwich:0.18.0 # 2017_11
+hg:4.1 hggit:0.8.10 dulwich:0.18.0 # 2017_11
+hg:4.2 hggit:0.8.10 dulwich:0.18.0 # 2017_11
+hg:4.3 hggit:0.8.10 dulwich:0.18.0 # 2017_11
+hg:4.4 hggit:0.8.10 dulwich:0.18.0 # 2017_11
+
+hg:4.5 hggit:0.8.11 dulwich:0.18.0 # 2018_02
+hg:4.6 hggit:0.8.12 dulwich:0.19.7 # 2018_10
+hg:4.7 hggit:0.8.12 dulwich:0.19.7 # 2018_10
+hg:4.8 hggit:@ dulwich:0.19.11
+hg:4.9 hggit:@ dulwich:0.19.11
+hg:5.0 hggit:@ dulwich:0.19.11

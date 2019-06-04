@@ -1,25 +1,17 @@
-language: python
-python: 2.7
+dist: xenial
+language: minimal
 
 cache:
-  - pip
-
-install:
-  - if [ "$HG_VERSION" != "dev" ];
-    then pip install Mercurial${HG_VERSION+==$HG_VERSION};
-    else pip install http://selenic.com/repo/hg/archive/tip.tar.gz;
-    fi
-
-before_script:
-  - hg --version || true
+  directories:
+    - $HOME/.cache/git-remote-hg
 
 script:
-  - make test
+  - ./tools/check-versions hg:$HG_VERSION
 
 matrix:
   include:
     - env:
-    - env: HG_VERSION=dev
+    - env: HG_VERSION=@
     - env: HG_VERSION=5.0
     - env: HG_VERSION=4.9
     - env: HG_VERSION=4.8
