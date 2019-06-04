@@ -853,7 +853,7 @@ test_expect_failure 'push updates notes' '
 	test_cmp expected actual
 '
 
-test_expect_success 'pull tags' '
+test_expect_unstable 'pull tags' '
 	test_when_finished "rm -rf hgrepo gitrepo" &&
 
 	(
