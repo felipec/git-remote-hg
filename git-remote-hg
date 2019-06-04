@@ -493,7 +493,7 @@ def export_ref(repo, name, kind, head):
     try:
         tip = marks.get_tip(ename)
         tip = repo[tip]
-    except:
+    except (KeyError,error.RepoLookupError):
         tip = repo[-1]
 
     revs = gitrange(repo, tip, head)
