@@ -74,6 +74,11 @@ def gitmode(flags):
 def gittz(tz):
     return '%+03d%02d' % (-tz / 3600, -tz % 3600 / 60)
 
+def hgtz(tz):
+    tz = int(tz)
+    tz = ((tz / 100) * 3600) + ((tz % 100) * 60)
+    return -tz
+
 def hgmode(mode):
     m = { '100755': 'x', '120000': 'l' }
     return m.get(mode, '')
@@ -260,9 +265,7 @@ class Parser:
         if ex:
             user += ex
 
-        tz = int(tz)
-        tz = ((tz / 100) * 3600) + ((tz % 100) * 60)
-        return (user, int(date), -tz)
+        return (user, int(date), hgtz(tz))
 
 def fix_file_path(path):
     path = os.path.normpath(path)
