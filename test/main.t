@@ -621,11 +621,11 @@ test_expect_success 'remote big push' '
 	check_branch hgrepo default one &&
 	check_branch hgrepo good_branch "good branch" &&
 	check_branch hgrepo bad_branch "bad branch" &&
-	check_branch hgrepo new_branch '' &&
+	check_branch hgrepo new_branch &&
 	check_bookmark hgrepo good_bmark one &&
 	check_bookmark hgrepo bad_bmark1 one &&
 	check_bookmark hgrepo bad_bmark2 one &&
-	check_bookmark hgrepo new_bmark ''
+	check_bookmark hgrepo new_bmark
 '
 
 test_expect_success 'remote big push fetch first' '
@@ -753,11 +753,11 @@ test_expect_success 'remote big push dry-run' '
 	check_branch hgrepo default one &&
 	check_branch hgrepo good_branch "good branch" &&
 	check_branch hgrepo bad_branch "bad branch" &&
-	check_branch hgrepo new_branch '' &&
+	check_branch hgrepo new_branch &&
 	check_bookmark hgrepo good_bmark one &&
 	check_bookmark hgrepo bad_bmark1 one &&
 	check_bookmark hgrepo bad_bmark2 one &&
-	check_bookmark hgrepo new_bmark ''
+	check_bookmark hgrepo new_bmark
 '
 
 test_expect_success 'remote double failed push' '
