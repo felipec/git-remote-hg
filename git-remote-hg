@@ -1146,6 +1146,10 @@ def check_tip(ref, kind, name, heads):
     else:
         return tip in heads
 
+def bookmark_is_fake(bmark, real_bmarks):
+    return bmark == fake_bmark or \
+            (bmark == 'master' and bmark not in real_bmarks)
+
 def do_export(parser):
     p_bmarks = []
     p_revs = {}
@@ -1196,8 +1200,7 @@ def do_export(parser):
                 continue
 
             print "ok %s" % ref
-            if bmark != fake_bmark and \
-                    not (bmark == 'master' and bmark not in parser.repo._bookmarks):
+            if not bookmark_is_fake(bmark, parser.repo._bookmarks):
                 p_bmarks.append((ref, bmark, old, new))
 
             if peer:
