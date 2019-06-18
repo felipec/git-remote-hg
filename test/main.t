@@ -760,6 +760,36 @@ test_expect_success 'remote big push dry-run' '
 	check_bookmark hgrepo new_bmark
 '
 
+test_expect_success 'remote big push force dry-run' '
+	test_when_finished "rm -rf hgrepo gitrepo*" &&
+
+	setup_big_push
+
+	(
+	cd gitrepo &&
+
+	check_push 0 --force --dry-run --all <<-\EOF
+	master
+	good_bmark
+	branches/good_branch
+	new_bmark:new
+	branches/new_branch:new
+	bad_bmark1:forced-update
+	bad_bmark2:forced-update
+	branches/bad_branch:forced-update
+	EOF
+	) &&
+
+	check_branch hgrepo default one &&
+	check_branch hgrepo good_branch "good branch" &&
+	check_branch hgrepo bad_branch "bad branch" &&
+	check_branch hgrepo new_branch &&
+	check_bookmark hgrepo good_bmark one &&
+	check_bookmark hgrepo bad_bmark1 one &&
+	check_bookmark hgrepo bad_bmark2 one &&
+	check_bookmark hgrepo new_bmark
+'
+
 test_expect_success 'remote double failed push' '
 	test_when_finished "rm -rf hgrepo gitrepo*" &&
 
