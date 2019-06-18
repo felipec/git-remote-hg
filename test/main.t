@@ -607,17 +607,14 @@ test_expect_success 'remote big push' '
 	cd gitrepo &&
 
 	check_push 1 --all <<-\EOF
-	master
-	good_bmark
-	branches/good_branch
-	new_bmark:new
-	branches/new_branch:new
 	bad_bmark1:non-fast-forward
 	bad_bmark2:non-fast-forward
 	branches/bad_branch:non-fast-forward
 	EOF
 	) &&
 
+	check gitrepo origin/master one &&
+	check gitrepo hg/origin/bookmarks/master one &&
 	check_branch hgrepo default one &&
 	check_branch hgrepo good_branch "good branch" &&
 	check_branch hgrepo bad_branch "bad branch" &&
@@ -645,8 +642,6 @@ test_expect_success 'remote big push fetch first' '
 	cd gitrepo &&
 
 	check_push 1 --all <<-\EOF &&
-	master
-	good_bmark
 	bad_bmark1:fetch-first
 	branches/bad_branch:fetch-first
 	EOF
@@ -654,12 +649,13 @@ test_expect_success 'remote big push fetch first' '
 	git fetch &&
 
 	check_push 1 --all <<-\EOF
-	master
-	good_bmark
 	bad_bmark1:non-fast-forward
 	branches/bad_branch:non-fast-forward
 	EOF
-	)
+	) &&
+
+	check gitrepo origin/master one &&
+	check gitrepo hg/origin/bookmarks/master one
 '
 
 test_expect_success 'remote big push force' '
@@ -682,6 +678,8 @@ test_expect_success 'remote big push force' '
 	EOF
 	) &&
 
+	check gitrepo origin/master two &&
+	check gitrepo hg/origin/bookmarks/master two &&
 	check_branch hgrepo default four &&
 	check_branch hgrepo good_branch eight &&
 	check_branch hgrepo bad_branch nine &&
@@ -701,11 +699,6 @@ test_expect_success 'remote big push dry-run' '
 	cd gitrepo &&
 
 	check_push 1 --dry-run --all <<-\EOF &&
-	master
-	good_bmark
-	branches/good_branch
-	new_bmark:new
-	branches/new_branch:new
 	bad_bmark1:non-fast-forward
 	bad_bmark2:non-fast-forward
 	branches/bad_branch:non-fast-forward
@@ -720,6 +713,8 @@ test_expect_success 'remote big push dry-run' '
 	EOF
 	) &&
 
+	check gitrepo origin/master one &&
+	check gitrepo hg/origin/bookmarks/master one &&
 	check_branch hgrepo default one &&
 	check_branch hgrepo good_branch "good branch" &&
 	check_branch hgrepo bad_branch "bad branch" &&
@@ -750,6 +745,8 @@ test_expect_success 'remote big push force dry-run' '
 	EOF
 	) &&
 
+	check gitrepo origin/master one &&
+	check gitrepo hg/origin/bookmarks/master one &&
 	check_branch hgrepo default one &&
 	check_branch hgrepo good_branch "good branch" &&
 	check_branch hgrepo bad_branch "bad branch" &&

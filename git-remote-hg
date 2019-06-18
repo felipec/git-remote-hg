@@ -1198,6 +1198,7 @@ def bookmark_is_fake(bmark, real_bmarks):
 def do_export(parser):
     p_bmarks = []
     p_revs = {}
+    ok_refs = []
 
     parser.next()
 
@@ -1236,7 +1237,7 @@ def do_export(parser):
                         continue
 
             p_revs[bnode] = ref
-            print("ok %s" % ref)
+            ok_refs.append(ref)
         elif ref.startswith('refs/heads/'):
             g_bmark = ref[len('refs/heads/'):]
             bmark = g_bmark.encode()
@@ -1246,8 +1247,9 @@ def do_export(parser):
             if old == new:
                 continue
 
-            print("ok %s" % ref)
-            if not bookmark_is_fake(bmark, parser.repo._bookmarks):
+            if bookmark_is_fake(bmark, parser.repo._bookmarks):
+                ok_refs.append(ref)
+            else:
                 p_bmarks.append((ref, bmark, old, new))
 
             if peer:
@@ -1261,7 +1263,7 @@ def do_export(parser):
             p_revs[bnode] = ref
         elif ref.startswith('refs/tags/'):
             if dry_run:
-                print("ok %s" % ref)
+                ok_refs.append(ref)
                 continue
             tag = ref[len('refs/tags/'):]
             tag = hgref(tag)
@@ -1280,7 +1282,7 @@ def do_export(parser):
                 fp.write(b'%s %s\n' % (node, tag))
                 fp.close()
             p_revs[bnode] = ref
-            print("ok %s" % ref)
+            ok_refs.append(ref)
         else:
             # transport-helper/fast-export bugs
             continue
@@ -1290,8 +1292,11 @@ def do_export(parser):
         return
 
     if dry_run:
-        if peer:
-            checkheads(parser.repo, peer, p_revs)
+        if not peer or checkheads(parser.repo, peer, p_revs):
+            for ref, bmark, old, new in p_bmarks:
+                print("ok %s" % ref)
+            for ref in ok_refs:
+                print("ok %s" % ref)
         print("")
         return
 
@@ -1306,13 +1311,21 @@ def do_export(parser):
         for ref, bmark, old, new in p_bmarks:
             if force_push:
                 old = remote_bmarks.get(bmark, b'')
-            if not peer.pushkey(b'bookmarks', bmark, old, new):
+            if peer.pushkey(b'bookmarks', bmark, old, new):
+                print("ok %s" % ref)
+            else:
                 print("error %s" % ref)
     else:
         # update local bookmarks
         for ref, bmark, old, new in p_bmarks:
-            if not bookmarks.pushbookmark(parser.repo, bmark, old, new):
+            if bookmarks.pushbookmark(parser.repo, bmark, old, new):
+                print("ok %s" % ref)
+            else:
                 print("error %s" % ref)
+
+    # update rest of the refs
+    for ref in ok_refs:
+        print("ok %s" % ref)
 
     print("")
 
