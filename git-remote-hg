@@ -401,7 +401,11 @@ def updatebookmarks(repo, peer):
 def get_repo(url, alias):
     global peer
 
-    myui = ui.ui()
+    if check_version(4, 1):
+        myui = ui.ui.load()
+    else:
+        myui = ui.ui()
+
     myui.setconfig('ui', 'interactive', 'off')
     myui.fout = sys.stderr
 
