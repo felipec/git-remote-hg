@@ -90,6 +90,9 @@ check_push () {
 		'')
 			grep "^   [a-f0-9]*\.\.[a-f0-9]* *${branch} -> ${branch}$" error || ref_ret=1
 			;;
+		*)
+			echo "BUG: wrong kind '$kind'" && return 3
+			;;
 		esac
 		test $ref_ret -ne 0 && echo "match for '$branch' failed" && return 2
 	done
@@ -675,7 +678,7 @@ test_expect_success 'remote big push fetch first' '
 	master
 	good_bmark
 	bad_bmark:fetch-first
-	branches/bad_branch:festch-first
+	branches/bad_branch:fetch-first
 	EOF
 
 	git fetch &&
