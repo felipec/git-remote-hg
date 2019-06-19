@@ -631,53 +631,23 @@ test_expect_success 'remote big push' '
 test_expect_success 'remote big push fetch first' '
 	test_when_finished "rm -rf hgrepo gitrepo*" &&
 
-	(
-	hg init hgrepo &&
-	cd hgrepo &&
-	echo zero > content &&
-	hg add content &&
-	hg commit -m zero &&
-	hg bookmark bad_bmark &&
-	hg bookmark good_bmark &&
-	hg bookmark -i good_bmark &&
-	hg -q branch good_branch &&
-	echo "good branch" > content &&
-	hg commit -m "good branch" &&
-	hg -q branch bad_branch &&
-	echo "bad branch" > content &&
-	hg commit -m "bad branch"
-	) &&
-
-	git clone "hg::hgrepo" gitrepo &&
+	setup_big_push
 
 	(
 	cd hgrepo &&
-	hg bookmark -f bad_bmark &&
+	hg checkout bad_branch &&
+	hg bookmark -f bad_bmark1 &&
 	echo update_bmark > content &&
 	hg commit -m "update bmark"
 	) &&
 
 	(
 	cd gitrepo &&
-	echo two > content &&
-	git commit -q -a -m two &&
-
-	git checkout -q good_bmark &&
-	echo three > content &&
-	git commit -q -a -m three &&
-
-	git checkout -q bad_bmark &&
-	echo four > content &&
-	git commit -q -a -m four &&
-
-	git checkout -q branches/bad_branch &&
-	echo five > content &&
-	git commit -q -a -m five &&
 
 	check_push 1 --all <<-\EOF &&
 	master
 	good_bmark
-	bad_bmark:fetch-first
+	bad_bmark1:fetch-first
 	branches/bad_branch:fetch-first
 	EOF
 
@@ -686,7 +656,7 @@ test_expect_success 'remote big push fetch first' '
 	check_push 1 --all <<-\EOF
 	master
 	good_bmark
-	bad_bmark:non-fast-forward
+	bad_bmark1:non-fast-forward
 	branches/bad_branch:non-fast-forward
 	EOF
 	)
