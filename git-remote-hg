@@ -473,6 +473,9 @@ def mark_to_rev(mark):
 
 # Get a range of revisions in the form of a..b (git committish)
 def gitrange(repo, a, b):
+    if a == b:
+        return []
+
     positive = []
     pending = set([b.rev()])
     negative = set([a.rev()])
