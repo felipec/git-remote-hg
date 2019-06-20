@@ -487,19 +487,17 @@ def gitrange(repo, a, b):
 
         parents = [p for p in pfunc(cur) if p >= 0]
 
-        if cur in pending:
+        if cur in negative:
+            negative.remove(cur)
+            for p in parents:
+                negative.add(p)
+                pending.discard(p)
+        elif cur in pending:
             positive.append(cur)
             pending.remove(cur)
             for p in parents:
                 if p not in negative:
                     pending.add(p)
-        elif cur in negative:
-            negative.remove(cur)
-            for p in parents:
-                if p not in pending:
-                    negative.add(p)
-                else:
-                    pending.discard(p)
 
     positive.reverse()
     return positive
