@@ -476,6 +476,8 @@ def gitrange(repo, a, b):
     if a == b:
         return []
 
+    pfunc = repo.changelog.parentrevs
+
     positive = []
     pending = set([b.rev()])
     negative = set([a.rev()])
@@ -483,7 +485,7 @@ def gitrange(repo, a, b):
         if not pending:
             break
 
-        parents = [p for p in repo.changelog.parentrevs(cur) if p >= 0]
+        parents = [p for p in pfunc(cur) if p >= 0]
 
         if cur in pending:
             positive.append(cur)
