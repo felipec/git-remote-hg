@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 #
 # Copyright (c) 2012 Felipe Contreras
 #
@@ -19,6 +19,7 @@ from mercurial import changegroup
 import re
 import sys
 import os
+import posixpath
 import json
 import shutil
 import subprocess
@@ -272,10 +273,12 @@ class Parser:
         return (user, int(date), hgtz(tz))
 
 def fix_file_path(path):
-    path = os.path.normpath(path)
+    #path = os.path.normpath(path)
+    path = posixpath.normpath(path)
     if not os.path.isabs(path):
         return path
-    return os.path.relpath(path, '/')
+    #return os.path.relpath(path, '/')
+    return posixpath.relpath(path, '/')
 
 def export_files(files):
     final = []
