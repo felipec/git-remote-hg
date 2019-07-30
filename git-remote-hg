@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 #
 # Copyright (c) 2012 Felipe Contreras
 #
@@ -117,6 +117,13 @@ def get_config_bool(config, default=False):
         return True
     elif value == "false":
         return False
+    else:
+        return default
+
+def get_config_str(config, default=""):
+    value = get_config(config).rstrip('\n')
+    if value != "":
+        return value
     else:
         return default
 
@@ -275,6 +282,9 @@ class Parser:
 def fix_file_path(path):
     #path = os.path.normpath(path)
     path = posixpath.normpath(path)
+    if transcode_filenames:
+        path = path.decode(hg_fn_enc).encode(git_fn_enc)
+        #new = old.decode("cp1251").encode("utf-8")
     if not os.path.isabs(path):
         return path
     #return os.path.relpath(path, '/')
@@ -914,6 +924,13 @@ def parse_commit(parser):
                     extra[ek] = urllib.unquote(ev)
             data = data[:i]
 
+    if transcode_filenames:
+        filesr = {}
+        for fk in files.keys():
+            newfk = fk.decode(git_fn_enc).encode(hg_fn_enc)
+            filesr[newfk] = files[fk]
+            files = filesr
+
     ctx = context.memctx(repo, (p1, p2), data,
             files.keys(), getfilectx,
             user, (date, tz), extra)
@@ -1313,6 +1330,7 @@ def main(args):
     global fake_bmark, hg_version
     global dry_run
     global notes, alias
+    global transcode_filenames, hg_fn_enc, git_fn_enc
 
     marks = None
     is_tmp = False
@@ -1330,6 +1348,8 @@ def main(args):
 
     hg_git_compat = get_config_bool('remote-hg.hg-git-compat')
     track_branches = get_config_bool('remote-hg.track-branches', True)
+    transcode_filenames = get_config_bool('remote-hg.transcode-filenames', False)
+    
     force_push = False
 
     if hg_git_compat:
@@ -1341,6 +1361,12 @@ def main(args):
         bad_mail = 'unknown'
         bad_name = 'Unknown'
 
+    if transcode_filenames:
+        hg_fn_enc = get_config_str('remote-hg.hg-filenames-enc','')
+        git_fn_enc = get_config_str('remote-hg.git-filenames-enc', 'utf-8')
+        if (hg_fn_enc == "") or (git_fn_enc == ""):
+            die('Filenames transcoding option is choosed, but hg and(or) git filenames encodings are not set!')
+    
     if alias[4:] == url:
         is_tmp = True
         alias = hashlib.sha1(alias).hexdigest()
