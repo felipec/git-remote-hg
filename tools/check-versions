@@ -274,7 +274,7 @@ elsif not $versions.empty?
   # mode 2
   $verbosity = HIGH
 
-  exit check(versions) ? 0 : 1
+  exit check($versions) ? 0 : 1
 else
   # mode 3
   $verbosity = QUIET
