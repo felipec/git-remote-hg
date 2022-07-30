@@ -17,4 +17,10 @@ jobs:
           python-version: '2.7'
       - name: Install python-dev
         run: sudo apt-get install -y python2.7-dev
+      - name: Cache check-versions script
+        id: cache-check-versions
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/git-remote-hg
+          key: check-versions
       - run: ./tools/check-versions hg:$HG_VERSION
