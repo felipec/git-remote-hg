@@ -682,7 +682,7 @@ test_expect_success 'remote big push force' '
 	EOF
 	) &&
 
-	check_branch hgrepo default six &&
+	check_branch hgrepo default four &&
 	check_branch hgrepo good_branch eight &&
 	check_branch hgrepo bad_branch nine &&
 	check_branch hgrepo new_branch ten &&
