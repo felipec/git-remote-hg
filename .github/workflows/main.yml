@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        hg: [ '4.5', '4.6', '4.7', '4.8', '4.9', '5.0' ]
+        hg: [ '5.0', '5.1', '5.2', '5.3', '5.4', '5.5', '5.6' ]
     env:
       HG_VERSION: ${{ matrix.hg }}
     steps:
