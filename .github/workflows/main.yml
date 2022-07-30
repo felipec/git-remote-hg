@@ -1,0 +1,15 @@
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '2.7'
+      - name: Install python-dev
+        run: sudo apt-get install -y python2.7-dev
+      - run: ./tools/check-versions hg:5.0
