@@ -31,3 +31,5 @@ hg:4.7 hggit:0.8.13 dulwich:0.19.7 # 2018_10
 hg:4.8 hggit:0.8.13 dulwich:0.19.7 # 2018_10
 hg:4.9 hggit:0.8.13 dulwich:0.19.7 # 2019_01
 hg:5.0 hggit:0.8.13 dulwich:0.19.7 # 2019_04
+hg:5.1 hggit:0.8.13 dulwich:0.19.7 # 2019_07
+hg:5.2 hggit:0.8.13 dulwich:0.19.7 # 2019_11
