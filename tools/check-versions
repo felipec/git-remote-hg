@@ -222,7 +222,7 @@ hggit_checkout_fix = lambda do |version|
   run_cmd %W[hg import -q --no-commit #{__dir__}/hggit_rename_fix_0.8.0.patch], fatal: false
 end
 
-add_component(:hggit, 'https://bitbucket.org/durin42/hg-git', checkout_fix: hggit_checkout_fix)
+add_component(:hggit, 'https://foss.heptapod.net/mercurial/hg-git', checkout_fix: hggit_checkout_fix)
 
 add_component(:dulwich, 'https://github.com/dulwich/dulwich.git', version_format: 'dulwich-%s', kind: :git)
 
