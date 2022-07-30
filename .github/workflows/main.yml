@@ -5,6 +5,11 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        hg: [ '4.5', '4.6', '4.7', '4.8', '4.9', '5.0' ]
+    env:
+      HG_VERSION: ${{ matrix.hg }}
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v4
@@ -12,4 +17,4 @@ jobs:
           python-version: '2.7'
       - name: Install python-dev
         run: sudo apt-get install -y python2.7-dev
-      - run: ./tools/check-versions hg:5.0
+      - run: ./tools/check-versions hg:$HG_VERSION
