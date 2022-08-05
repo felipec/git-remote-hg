@@ -50,8 +50,10 @@ If you want 'git-remote-hg' to be compatible with 'hg-git', and generate exactly
 Remember to run `git gc --aggressive` after cloning a repository, specially if
 it's a big one. Otherwise lots of space will be wasted.
 
-The oldest version of mercurial supported is 1.9. For the most part 1.8 works,
-but you might experience some issues.
+The newest supported version of Mercurial is 6.1 but only through Python 2. The
+oldest one is 2.4.
+
+Support for Python 3 is on the way.
 
 === Pushing branches ===
 
@@ -111,11 +113,14 @@ Limitations of the remote-helpers' framework apply.
 
 == Other projects ==
 
-There are other 'git-remote-hg' projects out there, do not confuse this one,
-this is the one distributed officially by the Git project:
+There are other 'git-remote-hg' projects out there, this is the original, which
+was distributed officially the Git project.
 
-* https://github.com/msysgit/msysgit/wiki/Guide-to-git-remote-hg[msysgit's git-remote-hg]
-* https://github.com/rfk/git-remote-hg[rfk's git-remote-hg]
+Over the years many similar tools have died out, the only actively maintained
+altnernative is mnauw's fork of this project:
+https://github.com/mnauw/git-remote-hg[mnauw/git-remote-hg]. I've merged some of
+his patches, and he has merged some of my patches, so the projects are mostly in
+sync, but not quite.
 
 For a comparison between these and other projects go
 https://github.com/felipec/git/wiki/Comparison-of-git-remote-hg-alternatives[here].
