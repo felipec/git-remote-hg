@@ -649,7 +649,7 @@ def export_tag(repo, tag):
     export_ref(repo, tag, 'tags', repo[node])
 
 def export_bookmark(repo, bmark):
-    head = bmarks[hgref(bmark)]
+    head = bmarks[hgref(bmark).encode()]
     export_ref(repo, bmark, 'bookmarks', head)
 
 def export_branch(repo, branch):
@@ -734,7 +734,7 @@ def do_list(parser):
 
     for bmark in bmarks:
         if bmarks[bmark].hex() != '0' * 40:
-            print("? refs/heads/%s" % gitref(bmark))
+            print("? refs/heads/%s" % gitref(bmark.decode()))
 
     for tag, node in repo.tagslist():
         if tag == 'tip':
@@ -1018,7 +1018,7 @@ def write_tag(repo, tag, node, msg, author):
     return (tagnode, branch)
 
 def checkheads_bmark(repo, ref, ctx):
-    bmark = ref[len('refs/heads/'):]
+    bmark = ref[len('refs/heads/'):].encode()
     if bmark not in bmarks:
         # new bmark
         return True
@@ -1172,7 +1172,7 @@ def check_tip(ref, kind, name, heads):
 
 def bookmark_is_fake(bmark, real_bmarks):
     return bmark == fake_bmark or \
-            (bmark == 'master' and bmark not in real_bmarks)
+            (bmark == b'master' and bmark not in real_bmarks)
 
 def do_export(parser):
     p_bmarks = []
@@ -1199,7 +1199,8 @@ def do_export(parser):
     for ref, node in parsed_refs.items():
         bnode = hgbin(node) if node else None
         if ref.startswith('refs/heads/branches'):
-            branch = ref[len('refs/heads/branches/'):]
+            g_branch = ref[len('refs/heads/branches/'):]
+            branch = g_branch.encode()
             if branch in branches and bnode in branches[branch]:
                 # up to date
                 continue
@@ -1208,7 +1209,7 @@ def do_export(parser):
                 remotemap = peer.branchmap()
                 if remotemap and branch in remotemap:
                     heads = [hghex(e) for e in remotemap[branch]]
-                    if not check_tip(ref, 'branches', branch, heads):
+                    if not check_tip(ref, 'branches', g_branch, heads):
                         print("error %s fetch first" % ref)
                         need_fetch = True
                         continue
@@ -1216,9 +1217,10 @@ def do_export(parser):
             p_revs[bnode] = ref
             print("ok %s" % ref)
         elif ref.startswith('refs/heads/'):
-            bmark = ref[len('refs/heads/'):]
+            g_bmark = ref[len('refs/heads/'):]
+            bmark = g_bmark.encode()
             new = node
-            old = bmarks[bmark].hex() if bmark in bmarks else ''
+            old = bmarks[bmark].hex() if bmark in bmarks else b''
 
             if old == new:
                 continue
@@ -1230,7 +1232,7 @@ def do_export(parser):
             if peer:
                 remote_old = peer.listkeys('bookmarks').get(bmark)
                 if remote_old:
-                    if not check_tip(ref, 'bookmarks', bmark, remote_old):
+                    if not check_tip(ref, 'bookmarks', g_bmark, remote_old):
                         print("error %s fetch first" % ref)
                         need_fetch = True
                         continue
