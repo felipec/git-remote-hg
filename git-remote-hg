@@ -61,6 +61,9 @@ RAW_AUTHOR_RE = re.compile('^(\w+) (?:(.+)? )?<(.*)> (\d+) ([+-]\d+)')
 
 VERSION = 2
 
+def debug(*args):
+    sys.stderr.write('DEBUG: %s\n' % repr(args))
+
 def die(msg, *args):
     sys.stderr.write('ERROR: %s\n' % (msg % args))
     sys.exit(1)
