@@ -169,7 +169,7 @@ class Marks:
 
     def upgrade_one(self):
         def get_id(rev):
-            return hghex(self.repo.changelog.node(int(rev)))
+            return hghex(self.repo.changelog.node(int(rev))).decode()
         self.tips = dict((name, get_id(rev)) for name, rev in self.tips.items())
         self.marks = dict((get_id(rev), mark) for rev, mark in self.marks.items())
         self.rev_marks = dict((mark, get_id(rev)) for mark, rev in self.rev_marks.items())
@@ -198,22 +198,23 @@ class Marks:
 
     def get_mark(self, rev):
         self.last_mark += 1
-        self.marks[rev] = self.last_mark
+        self.marks[rev.decode()] = self.last_mark
         return self.last_mark
 
     def new_mark(self, rev, mark):
+        rev = rev.decode()
         self.marks[rev] = mark
         self.rev_marks[mark] = rev
         self.last_mark = mark
 
     def is_marked(self, rev):
-        return rev in self.marks
+        return rev.decode() in self.marks
 
     def get_tip(self, branch):
-        return self.tips[branch]
+        return self.tips[branch].encode()
 
     def set_tip(self, branch, tip):
-        self.tips[branch] = tip
+        self.tips[branch] = tip.decode()
 
 class Parser:
 
@@ -474,10 +475,10 @@ def get_repo(url, alias):
     return repo
 
 def rev_to_mark(rev):
-    return marks.from_rev(rev.hex())
+    return marks.from_rev(rev.hex().decode())
 
 def mark_to_rev(mark):
-    return marks.to_rev(mark)
+    return marks.to_rev(mark).encode()
 
 # Get a range of revisions in the form of a..b (git committish)
 def gitrange(repo, a, b):
@@ -733,7 +734,7 @@ def do_list(parser):
             print("? refs/heads/branches/%s" % gitref(branch))
 
     for bmark in bmarks:
-        if bmarks[bmark].hex() != '0' * 40:
+        if bmarks[bmark].hex() != b'0' * 40:
             print("? refs/heads/%s" % gitref(bmark))
 
     for tag, node in repo.tagslist():
@@ -889,12 +890,12 @@ def parse_commit(parser):
     if from_mark:
         p1 = mark_to_rev(from_mark)
     else:
-        p1 = '0' * 40
+        p1 = b'0' * 40
 
     if merge_mark:
         p2 = mark_to_rev(merge_mark)
     else:
-        p2 = '0' * 40
+        p2 = b'0' * 40
 
     #
     # If files changed from any of the parents, hg wants to know, but in git if
@@ -988,7 +989,7 @@ def write_tag(repo, tag, node, msg, author):
         return make_memfilectx(repo, memctx, f, content)
 
     p1 = tip.hex()
-    p2 = '0' * 40
+    p2 = b'0' * 40
     if author:
         user, date, tz = author
         user = user.encode()
