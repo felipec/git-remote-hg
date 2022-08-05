@@ -22,11 +22,12 @@ import os
 import json
 import shutil
 import subprocess
-import urllib
 import atexit
-import urlparse
 import hashlib
 import time as ptime
+
+from urlparse import urlparse, urljoin
+from urllib import quote as urlquote, unquote as urlunquote
 
 #
 # If you want to see Mercurial revisions as Git commit notes:
@@ -259,7 +260,7 @@ class Parser:
             m = re.match('^(.+?) ext:\((.+)\)$', name)
             if m:
                 name = m.group(1)
-                ex = urllib.unquote(m.group(2))
+                ex = urlunquote(m.group(2))
 
         if email != bad_mail:
             if name:
@@ -350,7 +351,7 @@ def fixup_user_hg(user):
         mail = sanitize(m.group(2))
         ex = m.group(3)
         if ex:
-            name += ' ext:(' + urllib.quote(ex) + ')'
+            name += ' ext:(' + urlquote(ex) + ')'
     else:
         name = sanitize(user)
         if '@' in user:
@@ -575,7 +576,7 @@ def export_ref(repo, name, kind, head):
                 if key in ('author', 'committer', 'encoding', 'message', 'branch', 'hg-git'):
                     continue
                 else:
-                    extra_msg += "extra : %s : %s\n" % (key, urllib.quote(value))
+                    extra_msg += "extra : %s : %s\n" % (key, urlquote(value))
 
             if extra_msg:
                 desc += '\n--HG--\n' + extra_msg
@@ -909,7 +910,7 @@ def parse_commit(parser):
                     extra[k] = v
                 elif k == 'extra':
                     ek, ev = v.split(' : ', 1)
-                    extra[ek] = urllib.unquote(ev)
+                    extra[ek] = urlunquote(ev)
             data = data[:i]
 
     ctx = context.memctx(repo, (p1, p2), data,
@@ -1294,10 +1295,10 @@ def do_option(parser):
         print 'unsupported'
 
 def fix_path(alias, repo, orig_url):
-    url = urlparse.urlparse(orig_url, 'file')
+    url = urlparse(orig_url, 'file')
     if url.scheme != 'file' or os.path.isabs(os.path.expanduser(url.path)):
         return
-    abs_url = urlparse.urljoin("%s/" % os.getcwd(), orig_url)
+    abs_url = urljoin("%s/" % os.getcwd(), orig_url)
     cmd = ['git', 'config', 'remote.%s.url' % alias, "hg::%s" % abs_url]
     subprocess.call(cmd)
 
