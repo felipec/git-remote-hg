@@ -1,0 +1,24 @@
+diff --git a/hg b/hg
+index 4ec2b6140b..a3e61ad39c 100755
+--- a/hg
++++ b/hg
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python3
++#!/usr/bin/env python
+ #
+ # mercurial - scalable distributed SCM
+ #
+diff --git a/mercurial/hg.py b/mercurial/hg.py
+index 1a7a281e30..bf75f15ac1 100644
+--- a/mercurial/hg.py
++++ b/mercurial/hg.py
+@@ -1013,7 +1013,7 @@ def clone(
+                                 pass
+                 if uprev is None:
+                     try:
+-                        if destrepo._activebookmark:
++                        if False:
+                             uprev = destrepo.lookup(destrepo._activebookmark)
+                             update = destrepo._activebookmark
+                         else:
+
