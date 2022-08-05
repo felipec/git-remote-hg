@@ -645,7 +645,7 @@ def export_ref(repo, name, kind, head):
     marks.set_tip(ename, head.hex())
 
 def export_tag(repo, tag):
-    node = repo.tags().get(hgref(tag))
+    node = repo.tags().get(hgref(tag).encode())
     export_ref(repo, tag, 'tags', repo[node])
 
 def export_bookmark(repo, bmark):
@@ -737,9 +737,9 @@ def do_list(parser):
             print("? refs/heads/%s" % gitref(bmark.decode()))
 
     for tag, node in repo.tagslist():
-        if tag == 'tip':
+        if tag == b'tip':
             continue
-        print("? refs/tags/%s" % gitref(tag))
+        print("? refs/tags/%s" % gitref(tag.decode()))
 
     print("")
 
@@ -971,7 +971,7 @@ def parse_tag(parser):
         rev = None
     parsed_refs['refs/tags/' + name] = rev
 
-    parsed_tags[name] = (tagger, data)
+    parsed_tags[name.encode()] = (tagger, data)
 
 def write_tag(repo, tag, node, msg, author):
     branch = repo[node].branch()
@@ -1243,11 +1243,11 @@ def do_export(parser):
                 print("ok %s" % ref)
                 continue
             tag = ref[len('refs/tags/'):]
-            tag = hgref(tag)
+            tag = hgref(tag).encode()
             author, msg = parsed_tags.get(tag, (None, None))
             if mode == 'git':
                 if not msg:
-                    msg = 'Added tag %s for changeset %s' % (tag, node[:12])
+                    msg = b'Added tag %s for changeset %s' % (tag, node[:12])
                 tagnode, branch = write_tag(parser.repo, tag, node, msg, author)
                 p_revs[tagnode] = 'refs/heads/branches/' + gitref(branch.decode())
             else:
