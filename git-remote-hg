@@ -680,30 +680,30 @@ def branch_tip(branch):
     return branches[branch][-1]
 
 def get_branch_tip(repo, branch):
-    heads = branches.get(hgref(branch), None)
+    heads = branches.get(hgref(branch).encode(), None)
     if not heads:
         return None
 
     # verify there's only one head
     if (len(heads) > 1):
         warn("Branch '%s' has more than one head, consider merging" % branch)
-        return branch_tip(hgref(branch))
+        return branch_tip(hgref(branch).encode())
 
     return heads[0]
 
 def list_head(repo, cur):
     global g_head, fake_bmark
 
-    if 'default' not in branches:
+    if b'default' not in branches:
         # empty repo
         return
 
-    node = repo[branch_tip('default')]
-    head = 'master' if 'master' not in bmarks else 'default'
+    node = repo[branch_tip(b'default')]
+    head = b'master' if b'master' not in bmarks else b'default'
     fake_bmark = head
     bmarks[head] = node
 
-    head = gitref(head)
+    head = gitref(head.decode())
     print("@refs/heads/%s HEAD" % head)
     g_head = (head, node)
 
@@ -730,7 +730,7 @@ def do_list(parser):
 
     if track_branches:
         for branch in branches:
-            print("? refs/heads/branches/%s" % gitref(branch))
+            print("? refs/heads/branches/%s" % gitref(branch.decode()))
 
     for bmark in bmarks:
         if bmarks[bmark].hex() != '0' * 40:
@@ -1249,7 +1249,7 @@ def do_export(parser):
                 if not msg:
                     msg = 'Added tag %s for changeset %s' % (tag, node[:12])
                 tagnode, branch = write_tag(parser.repo, tag, node, msg, author)
-                p_revs[tagnode] = 'refs/heads/branches/' + gitref(branch)
+                p_revs[tagnode] = 'refs/heads/branches/' + gitref(branch.decode())
             else:
                 if check_version(2, 4):
                     vfs = parser.repo.vfs
