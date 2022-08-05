@@ -29,6 +29,10 @@ import time as ptime
 from urlparse import urlparse, urljoin
 from urllib import quote as urlquote, unquote as urlunquote
 
+# Hack to set default encoding
+reload(sys)
+sys.setdefaultencoding('utf-8')
+
 #
 # If you want to see Mercurial revisions as Git commit notes:
 # git config core.notesRef refs/notes/hg
@@ -218,7 +222,7 @@ class Parser:
         self.line = self.get_line()
 
     def get_line(self):
-        return sys.stdin.readline().strip()
+        return sys.stdin.readline().decode().strip()
 
     def __getitem__(self, i):
         return self.line.split()[i]
@@ -793,6 +797,7 @@ def get_merge_files(repo, p1, p2, files):
             files[e] = f
 
 def c_style_unescape(string):
+    string = string.encode()
     if string[0] == string[-1] == '"':
         return string.decode('string-escape')[1:-1]
     return string
@@ -879,7 +884,7 @@ def parse_commit(parser):
     extra = {}
 
     if committer != author:
-        extra['committer'] = "%s %u %u" % committer
+        extra['committer'] = ("%s %u %u" % committer).encode()
 
     if from_mark:
         p1 = mark_to_rev(from_mark)
@@ -920,7 +925,7 @@ def parse_commit(parser):
 
     ctx = context.memctx(repo, (p1, p2), data,
             files.keys(), getfilectx,
-            user, (date, tz), extra)
+            user.encode(), (date, tz), extra)
 
     tmp = encoding.encoding
     encoding.encoding = 'utf-8'
@@ -986,6 +991,7 @@ def write_tag(repo, tag, node, msg, author):
     p2 = '0' * 40
     if author:
         user, date, tz = author
+        user = user.encode()
         date_tz = (date, tz)
     else:
         cmd = ['git', 'var', 'GIT_COMMITTER_IDENT']
