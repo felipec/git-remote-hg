@@ -160,15 +160,15 @@ class Marks:
         self.version = tmp.get('version', 1)
         self.last_note = tmp.get('last-note', 0)
 
-        for rev, mark in self.marks.iteritems():
+        for rev, mark in self.marks.items():
             self.rev_marks[mark] = rev
 
     def upgrade_one(self):
         def get_id(rev):
             return hghex(self.repo.changelog.node(int(rev)))
-        self.tips = dict((name, get_id(rev)) for name, rev in self.tips.iteritems())
-        self.marks = dict((get_id(rev), mark) for rev, mark in self.marks.iteritems())
-        self.rev_marks = dict((mark, get_id(rev)) for mark, rev in self.rev_marks.iteritems())
+        self.tips = dict((name, get_id(rev)) for name, rev in self.tips.items())
+        self.marks = dict((get_id(rev), mark) for rev, mark in self.marks.items())
+        self.rev_marks = dict((mark, get_id(rev)) for mark, rev in self.rev_marks.items())
         self.version = 2
 
     def dict(self):
@@ -381,7 +381,7 @@ def updatebookmarks(repo, peer):
     if not remotemarks:
         return
 
-    changes = { k: hgbin(v) for k, v in remotemarks.iteritems() }
+    changes = { k: hgbin(v) for k, v in remotemarks.items() }
 
     wlock = tr = None
     try:
@@ -572,7 +572,7 @@ def export_ref(repo, name, kind, head):
             for e in renames:
                 extra_msg += "rename : %s => %s\n" % e
 
-            for key, value in extra.iteritems():
+            for key, value in extra.items():
                 if key in ('author', 'committer', 'encoding', 'message', 'branch', 'hg-git'):
                     continue
                 else:
@@ -705,13 +705,18 @@ def list_head(repo, cur):
 
 def do_list(parser):
     repo = parser.repo
-    for bmark, node in bookmarks.listbookmarks(repo).iteritems():
+    for bmark, node in bookmarks.listbookmarks(repo).items():
         bmarks[bmark] = repo[node]
 
     cur = repo.dirstate.branch()
     orig = peer if peer else repo
 
-    for branch, heads in orig.branchmap().iteritems():
+    if check_version(5, 1):
+        items = orig.branchmap().items()
+    else:
+        items = orig.branchmap().iteritems()
+
+    for branch, heads in items:
         # only open heads
         heads = [h for h in heads if 'close' not in repo.changelog.read(h)[5]]
         if heads:
@@ -1043,7 +1048,7 @@ def checkheads(repo, remote, p_revs):
     new = {}
     ret = True
 
-    for node, ref in p_revs.iteritems():
+    for node, ref in p_revs.items():
         ctx = repo[node]
         branch = ctx.branch()
         if branch not in remotemap:
@@ -1058,7 +1063,7 @@ def checkheads(repo, remote, p_revs):
             continue
         new.setdefault(branch, []).append(ctx.rev())
 
-    for branch, heads in new.iteritems():
+    for branch, heads in new.items():
         old = [repo.changelog.rev(x) for x in remotemap[branch]]
         for rev in heads:
             if check_version(2, 3):
@@ -1185,7 +1190,7 @@ def do_export(parser):
 
     need_fetch = False
 
-    for ref, node in parsed_refs.iteritems():
+    for ref, node in parsed_refs.items():
         bnode = hgbin(node) if node else None
         if ref.startswith('refs/heads/branches'):
             branch = ref[len('refs/heads/branches/'):]
