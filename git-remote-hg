@@ -102,10 +102,10 @@ def hgbin(n):
     return node.bin(n)
 
 def hgref(ref):
-    return ref.replace('___', ' ')
+    return ref.replace('___', ' ').encode()
 
 def gitref(ref):
-    return ref.replace(' ', '___')
+    return ref.decode().replace(' ', '___')
 
 def check_version(*check):
     if not hg_version:
@@ -645,11 +645,11 @@ def export_ref(repo, name, kind, head):
     marks.set_tip(ename, head.hex())
 
 def export_tag(repo, tag):
-    node = repo.tags().get(hgref(tag).encode())
+    node = repo.tags().get(hgref(tag))
     export_ref(repo, tag, 'tags', repo[node])
 
 def export_bookmark(repo, bmark):
-    head = bmarks[hgref(bmark).encode()]
+    head = bmarks[hgref(bmark)]
     export_ref(repo, bmark, 'bookmarks', head)
 
 def export_branch(repo, branch):
@@ -680,14 +680,14 @@ def branch_tip(branch):
     return branches[branch][-1]
 
 def get_branch_tip(repo, branch):
-    heads = branches.get(hgref(branch).encode(), None)
+    heads = branches.get(hgref(branch), None)
     if not heads:
         return None
 
     # verify there's only one head
     if (len(heads) > 1):
         warn("Branch '%s' has more than one head, consider merging" % branch)
-        return branch_tip(hgref(branch).encode())
+        return branch_tip(hgref(branch))
 
     return heads[0]
 
@@ -703,7 +703,7 @@ def list_head(repo, cur):
     fake_bmark = head
     bmarks[head] = node
 
-    head = gitref(head.decode())
+    head = gitref(head)
     print("@refs/heads/%s HEAD" % head)
     g_head = (head, node)
 
@@ -730,16 +730,16 @@ def do_list(parser):
 
     if track_branches:
         for branch in branches:
-            print("? refs/heads/branches/%s" % gitref(branch.decode()))
+            print("? refs/heads/branches/%s" % gitref(branch))
 
     for bmark in bmarks:
         if bmarks[bmark].hex() != '0' * 40:
-            print("? refs/heads/%s" % gitref(bmark.decode()))
+            print("? refs/heads/%s" % gitref(bmark))
 
     for tag, node in repo.tagslist():
         if tag == b'tip':
             continue
-        print("? refs/tags/%s" % gitref(tag.decode()))
+        print("? refs/tags/%s" % gitref(tag))
 
     print("")
 
@@ -906,7 +906,7 @@ def parse_commit(parser):
     # Check if the ref is supposed to be a named branch
     if ref.startswith('refs/heads/branches/'):
         branch = ref[len('refs/heads/branches/'):]
-        extra['branch'] = hgref(branch)
+        extra['branch'] = hgref(branch).decode()
 
     if mode == 'hg':
         i = data.find('\n--HG--\n')
@@ -1243,13 +1243,13 @@ def do_export(parser):
                 print("ok %s" % ref)
                 continue
             tag = ref[len('refs/tags/'):]
-            tag = hgref(tag).encode()
+            tag = hgref(tag)
             author, msg = parsed_tags.get(tag, (None, None))
             if mode == 'git':
                 if not msg:
                     msg = b'Added tag %s for changeset %s' % (tag, node[:12])
                 tagnode, branch = write_tag(parser.repo, tag, node, msg, author)
-                p_revs[tagnode] = 'refs/heads/branches/' + gitref(branch.decode())
+                p_revs[tagnode] = 'refs/heads/branches/' + gitref(branch)
             else:
                 if check_version(2, 4):
                     vfs = parser.repo.vfs
