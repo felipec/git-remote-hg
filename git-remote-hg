@@ -803,10 +803,9 @@ def get_merge_files(repo, p1, p2, files):
             files[e] = f
 
 def c_style_unescape(string):
-    string = string.encode()
     if string[0] == string[-1] == '"':
-        return string.decode('string-escape')[1:-1]
-    return string
+        return string.encode().decode('unicode_escape').encode('latin-1')[1:-1]
+    return string.encode()
 
 def make_memfilectx(repo, changectx, path, data, islink=False, isexec=False, copied=None):
     if check_version(4, 5):
