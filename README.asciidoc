@@ -102,10 +102,10 @@ Mercurial branches and bookmarks have some limitations of Git branches: you
 can't have both 'dev/feature' and 'dev' (as Git uses files and directories to
 store them).
 
-Multiple anonymous heads (which are useless anyway) are not supported; you
+Multiple anonymous heads (which are useless anyway) are not supported: you
 would only see the latest head.
 
-Closed branches are not supported; they are not shown and you can't close or
+Closed branches are not supported: they are not shown and you can't close or
 reopen. Additionally in certain rare situations a synchronization issue can
 occur (https://github.com/felipec/git/issues/65[Bug #65]).
 
@@ -113,8 +113,8 @@ Limitations of the remote-helpers' framework apply.
 
 == Other projects ==
 
-There are other 'git-remote-hg' projects out there, this is the original, which
-was distributed officially the Git project.
+There are other 'git-remote-hg' projects out there, but this is the original,
+which was distributed officially in the Git project.
 
 Over the years many similar tools have died out, the only actively maintained
 altnernative is mnauw's fork of this project:
