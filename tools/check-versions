@@ -102,7 +102,7 @@ class Component
   def build
     Dir.chdir(dir) do
       targets = %w[build_py build_ext].map { |e| [e, '--build-lib', "#{$builddir}/python"] }
-      run_cmd %w[python2 setup.py --quiet] + targets.flatten
+      run_cmd %w[python setup.py --quiet] + targets.flatten
     end
   end
 

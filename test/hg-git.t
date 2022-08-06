@@ -17,16 +17,16 @@ then
 	test_done
 fi
 
-if ! python2 -c 'import mercurial' > /dev/null 2>&1
+if ! python -c 'import mercurial' > /dev/null 2>&1
 then
 	skip_all='skipping remote-hg tests; mercurial not available'
 	test_done
 fi
 
-if python2 -c 'import hggit' > /dev/null 2>&1
+if python -c 'import hggit' > /dev/null 2>&1
 then
 	hggit=hggit
-elif python2 -c 'import hgext.git' > /dev/null 2>&1
+elif python -c 'import hgext.git' > /dev/null 2>&1
 then
 	hggit=hgext.git
 else
