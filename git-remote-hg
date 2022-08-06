@@ -301,7 +301,7 @@ def export_files(files):
             print("blob")
             print("mark :%u" % mark)
             print("data %d" % len(d))
-            print(d)
+            print(d.decode())
 
         path = fix_file_path(f.path())
         final.append((gitmode(f.flags()), mark, path))
@@ -601,7 +601,7 @@ def export_ref(repo, name, kind, head):
         print("author %s" % (author))
         print("committer %s" % (committer))
         print("data %d" % (len(desc)))
-        print(desc)
+        print(desc.decode())
 
         if len(parents) > 0:
             print("from :%s" % (rev_to_mark(parents[0])))
@@ -643,7 +643,7 @@ def export_ref(repo, name, kind, head):
             print("N inline :%u" % rev_to_mark(c))
             msg = c.hex()
             print(("data %d" % (len(msg))))
-            print(msg)
+            print(msg.decode())
         print("")
 
         marks.last_note = note_mark
