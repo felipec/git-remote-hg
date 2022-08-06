@@ -116,7 +116,7 @@ def get_config(config):
     cmd = ['git', 'config', '--get', config]
     process = subprocess.Popen(cmd, stdout=subprocess.PIPE)
     output, _ = process.communicate()
-    return output
+    return output.decode()
 
 def get_config_bool(config, default=False):
     value = get_config(config).rstrip('\n')
@@ -1003,7 +1003,7 @@ def write_tag(repo, tag, node, msg, author):
         cmd = ['git', 'var', 'GIT_COMMITTER_IDENT']
         process = subprocess.Popen(cmd, stdout=subprocess.PIPE)
         output, _ = process.communicate()
-        m = re.match('^.* <.*>', output)
+        m = re.match(b'^.* <.*>', output)
         if m:
             user = m.group(0)
         else:
@@ -1361,7 +1361,7 @@ def main(args):
 
     if alias[4:] == url:
         is_tmp = True
-        alias = hashlib.sha1(alias).hexdigest()
+        alias = hashlib.sha1(alias.encode()).hexdigest()
 
     dirname = os.path.join(gitdir, 'hg', alias)
     branches = {}
