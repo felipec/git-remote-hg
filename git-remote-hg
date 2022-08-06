@@ -77,7 +77,7 @@ def warn(msg, *args):
     sys.stderr.write('WARNING: %s\n' % (msg % args))
 
 def gitmode(flags):
-    return 'l' in flags and '120000' or 'x' in flags and '100755' or '100644'
+    return b'l' in flags and '120000' or b'x' in flags and '100755' or '100644'
 
 def gittz(tz):
     sign = 1 if tz >= 0 else -1
@@ -380,7 +380,7 @@ def fixup_user(user):
     return '%s <%s>' % (name, mail)
 
 def updatebookmarks(repo, peer):
-    remotemarks = peer.listkeys('bookmarks')
+    remotemarks = peer.listkeys(b'bookmarks')
     localmarks = repo._bookmarks
 
     if not remotemarks:
@@ -391,7 +391,7 @@ def updatebookmarks(repo, peer):
     wlock = tr = None
     try:
         wlock = repo.wlock()
-        tr = repo.transaction('bookmark')
+        tr = repo.transaction(b'bookmark')
         if check_version(4, 3):
             localmarks.applychanges(repo, tr, changes.items())
         else:
@@ -415,11 +415,11 @@ def get_repo(url, alias):
     else:
         myui = ui.ui()
 
-    myui.setconfig('ui', 'interactive', 'off')
+    myui.setconfig(b'ui', b'interactive', b'off')
     myui.fout = sys.stderr
 
     if get_config_bool('remote-hg.insecure'):
-        myui.setconfig('web', 'cacerts', '')
+        myui.setconfig(b'web', b'cacerts', b'')
 
     extensions.loadall(myui)
 
@@ -539,17 +539,17 @@ def export_ref(repo, name, kind, head):
             continue
 
         (manifest, user, (time, tz), files, desc, extra) = repo.changelog.read(node)
-        rev_branch = extra['branch'].decode()
+        rev_branch = extra[b'branch'].decode()
 
         user = user.decode()
 
         author = "%s %d %s" % (fixup_user(user), time, gittz(tz))
-        if 'committer' in extra:
+        if b'committer' in extra:
             try:
-                cuser, ctime, ctz = extra['committer'].decode().rsplit(' ', 2)
+                cuser, ctime, ctz = extra[b'committer'].decode().rsplit(' ', 2)
                 committer = "%s %s %s" % (fixup_user(cuser), ctime, gittz(int(ctz)))
             except ValueError:
-                cuser = extra['committer'].decode()
+                cuser = extra[b'committer'].decode()
                 committer = "%s %d %s" % (fixup_user(cuser), time, gittz(tz))
         else:
             committer = author
@@ -728,7 +728,7 @@ def do_list(parser):
 
     for branch, heads in items:
         # only open heads
-        heads = [h for h in heads if 'close' not in repo.changelog.read(h)[5]]
+        heads = [h for h in heads if b'close' not in repo.changelog.read(h)[5]]
         if heads:
             branches[branch] = heads
 
@@ -890,7 +890,7 @@ def parse_commit(parser):
     extra = {}
 
     if committer != author:
-        extra['committer'] = ("%s %u %u" % committer).encode()
+        extra[b'committer'] = ("%s %u %u" % committer).encode()
 
     if from_mark:
         p1 = mark_to_rev(from_mark)
@@ -1011,8 +1011,8 @@ def write_tag(repo, tag, node, msg, author):
         date_tz = None
 
     ctx = context.memctx(repo, (p1, p2), msg,
-            ['.hgtags'], getfilectx,
-            user, date_tz, {'branch': branch})
+            [b'.hgtags'], getfilectx,
+            user, date_tz, {b'branch': branch})
 
     tmp = encoding.encoding
     encoding.encoding = 'utf-8'
@@ -1121,29 +1121,29 @@ def push_unsafe(repo, remote, parsed_refs, p_revs):
 
     if check_version(4, 0):
         if check_version(4, 4):
-            cg = changegroup.makechangegroup(repo, outgoing, '01', 'push')
+            cg = changegroup.makechangegroup(repo, outgoing, b'01', b'push')
         else:
-            cg = changegroup.getchangegroup(repo, 'push', outgoing)
+            cg = changegroup.getchangegroup(repo, b'push', outgoing)
     elif check_version(3, 2):
-        cg = changegroup.getchangegroup(repo, 'push', heads=list(p_revs), common=common)
+        cg = changegroup.getchangegroup(repo, b'push', heads=list(p_revs), common=common)
     elif check_version(3, 0):
-        cg = changegroup.getbundle(repo, 'push', heads=list(p_revs), common=common)
+        cg = changegroup.getbundle(repo, b'push', heads=list(p_revs), common=common)
     else:
-        cg = repo.getbundle('push', heads=list(p_revs), common=common)
+        cg = repo.getbundle(b'push', heads=list(p_revs), common=common)
 
-    unbundle = remote.capable('unbundle')
+    unbundle = remote.capable(b'unbundle')
     if unbundle:
         if force:
-            remoteheads = ['force']
-        ret = remote.unbundle(cg, remoteheads, 'push')
+            remoteheads = [b'force']
+        ret = remote.unbundle(cg, remoteheads, b'push')
     else:
-        ret = remote.addchangegroup(cg, 'push', repo.url())
+        ret = remote.addchangegroup(cg, b'push', repo.url())
 
-    phases = remote.listkeys('phases')
+    phases = remote.listkeys(b'phases')
     if phases:
         for head in p_revs:
             # update to public
-            remote.pushkey('phases', hghex(head), '1', '0')
+            remote.pushkey(b'phases', hghex(head), b'1', b'0')
 
     return ret
 
@@ -1156,7 +1156,7 @@ def push(repo, remote, parsed_refs, p_revs):
         return
 
     lock = None
-    unbundle = remote.capable('unbundle')
+    unbundle = remote.capable(b'unbundle')
     if not unbundle:
         lock = remote.lock()
     try:
@@ -1236,7 +1236,7 @@ def do_export(parser):
                 p_bmarks.append((ref, bmark, old, new))
 
             if peer:
-                remote_old = peer.listkeys('bookmarks').get(bmark)
+                remote_old = peer.listkeys(b'bookmarks').get(bmark)
                 if remote_old:
                     if not check_tip(ref, 'bookmarks', g_bmark, remote_old):
                         print("error %s fetch first" % ref)
@@ -1261,8 +1261,8 @@ def do_export(parser):
                     vfs = parser.repo.vfs
                 else:
                     vfs = parser.repo.opener
-                fp = vfs('localtags', 'a')
-                fp.write('%s %s\n' % (node, tag))
+                fp = vfs(b'localtags', b'a')
+                fp.write(b'%s %s\n' % (node, tag))
                 fp.close()
             p_revs[bnode] = ref
             print("ok %s" % ref)
@@ -1287,11 +1287,11 @@ def do_export(parser):
             return
 
         # update remote bookmarks
-        remote_bmarks = peer.listkeys('bookmarks')
+        remote_bmarks = peer.listkeys(b'bookmarks')
         for ref, bmark, old, new in p_bmarks:
             if force_push:
-                old = remote_bmarks.get(bmark, '')
-            if not peer.pushkey('bookmarks', bmark, old, new):
+                old = remote_bmarks.get(bmark, b'')
+            if not peer.pushkey(b'bookmarks', bmark, old, new):
                 print("error %s" % ref)
     else:
         # update local bookmarks
