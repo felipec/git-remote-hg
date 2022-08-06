@@ -828,7 +828,7 @@ def parse_commit(parser):
     parser.next()
     committer = parser.get_author()
     parser.next()
-    data = parser.get_data()
+    data = parser.get_data().decode()
     parser.next()
     if parser.check('from'):
         from_mark = parser.get_mark()
@@ -929,7 +929,7 @@ def parse_commit(parser):
                     extra[ek] = urlunquote(ev).encode()
             data = data[:i]
 
-    ctx = context.memctx(repo, (p1, p2), data,
+    ctx = context.memctx(repo, (p1, p2), data.encode(),
             files.keys(), getfilectx,
             user.encode(), (date, tz), extra)
 
