@@ -185,7 +185,7 @@ class Marks:
         return self.marks[rev]
 
     def to_rev(self, mark):
-        return str(self.rev_marks[mark])
+        return self.rev_marks[mark]
 
     def next_mark(self):
         self.last_mark += 1
@@ -205,7 +205,7 @@ class Marks:
         return rev in self.marks
 
     def get_tip(self, branch):
-        return str(self.tips[branch])
+        return self.tips[branch]
 
     def set_tip(self, branch, tip):
         self.tips[branch] = tip
