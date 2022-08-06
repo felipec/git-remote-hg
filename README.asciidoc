@@ -120,7 +120,9 @@ Over the years many similar tools have died out, the only actively maintained
 altnernative is mnauw's fork of this project:
 https://github.com/mnauw/git-remote-hg[mnauw/git-remote-hg]. I've merged some of
 his patches, and he has merged some of my patches, so the projects are mostly in
-sync, but not quite.
+sync, but not quite. In particular Nauwelaerts' fork has many administrative
+extensions, which although useful to some people, I don't believe they belong
+in the core.
 
 For a comparison between these and other projects go
 https://github.com/felipec/git/wiki/Comparison-of-git-remote-hg-alternatives[here].
