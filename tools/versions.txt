@@ -46,3 +46,5 @@ hg:5.9 hggit:0.10.2 dulwich:0.20.0 # 2021_08
 hg:6.0 hggit:0.10.2 dulwich:0.20.0 # 2021_11
 hg:6.1 hggit:0.10.2 dulwich:0.20.0 # 2022_02
 hg:6.2 hggit:0.10.2 dulwich:0.20.0 # 2022_07
+
+hg:6.2 hggit:1.0.0 dulwich:0.20.45 # latest
