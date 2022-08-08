@@ -41,4 +41,8 @@ hg:5.6 hggit:0.9.0 dulwich:0.19.15 # 2020_10
 
 hg:5.7 hggit:0.10.0 dulwich:0.19.16 # 2021_01
 
-hg:5.8 hggit:0.10.1 dulwich:0.20.0 # 2021_05 # python3
+hg:5.8 hggit:0.10.2 dulwich:0.20.0 # 2021_05 # python3
+hg:5.9 hggit:0.10.2 dulwich:0.20.0 # 2021_08
+hg:6.0 hggit:0.10.2 dulwich:0.20.0 # 2021_11
+hg:6.1 hggit:0.10.2 dulwich:0.20.0 # 2022_02
+hg:6.2 hggit:0.10.2 dulwich:0.20.0 # 2022_07
