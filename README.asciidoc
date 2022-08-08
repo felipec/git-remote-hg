@@ -1,4 +1,4 @@
-'git-remote-hg' is the semi-official Mercurial bridge from Git project, once
+`git-remote-hg` is the semi-official Mercurial bridge from the Git project, once
 installed, it allows you to clone, fetch and push to and from Mercurial
 repositories as if they were Git ones:
 
@@ -6,10 +6,10 @@ repositories as if they were Git ones:
 git clone "hg::http://selenic.com/repo/hello"
 --------------------------------------
 
-To enable this, simply add the 'git-remote-hg' script anywhere in your `$PATH`:
+To enable this, simply add the `git-remote-hg` script anywhere in your `$PATH`:
 
 --------------------------------------
-wget https://raw.github.com/felipec/git-remote-hg/master/git-remote-hg -O ~/bin/git-remote-hg
+curl https://raw.githubusercontent.com/felipec/git-remote-hg/master/git-remote-hg -o ~/bin/git-remote-hg
 chmod +x ~/bin/git-remote-hg
 --------------------------------------
 
@@ -25,7 +25,8 @@ If you want to see Mercurial revisions as Git commit notes:
 % git config core.notesRef refs/notes/hg
 --------------------------------------
 
-If you are not interested in Mercurial permanent and global branches (aka. commit labels):
+If you are not interested in Mercurial permanent and global branches (aka.
+commit labels):
 
 --------------------------------------
 % git config --global remote-hg.track-branches false
@@ -33,13 +34,14 @@ If you are not interested in Mercurial permanent and global branches (aka. commi
 
 With this configuration, the 'branches/foo' refs won't appear.
 
-If you want the equivalent of 'hg clone --insecure':
+If you want the equivalent of `hg clone --insecure`:
 
 --------------------------------------
 % git config --global remote-hg.insecure true
 --------------------------------------
 
-If you want 'git-remote-hg' to be compatible with 'hg-git', and generate exactly the same commits:
+If you want `git-remote-hg` to be compatible with `hg-git`, and generate exactly
+the same commits:
 
 --------------------------------------
 % git config --global remote-hg.hg-git-compat true
@@ -47,7 +49,7 @@ If you want 'git-remote-hg' to be compatible with 'hg-git', and generate exactly
 
 == Notes ==
 
-Remember to run `git gc --aggressive` after cloning a repository, specially if
+Remember to run `git gc --aggressive` after cloning a repository, especially if
 it's a big one. Otherwise lots of space will be wasted.
 
 The newest supported version of Mercurial is 6.1 but only through Python 2. The
@@ -57,7 +59,7 @@ Support for Python 3 is ready, but will be released in the next version soon.
 
 === Pushing branches ===
 
-To push a branch, you need to use the "branches/" prefix:
+To push a branch, you need to use the 'branches/' prefix:
 
 --------------------------------------
 % git checkout branches/next
@@ -67,7 +69,7 @@ To push a branch, you need to use the "branches/" prefix:
 
 All the pushed commits will receive the "next" Mercurial named branch.
 
-*Note*: Make sure you don't have +remote-hg.track-branches+ disabled.
+*Note*: Make sure you don't have `remote-hg.track-branches` disabled.
 
 === Cloning HTTPS ===
 
@@ -77,7 +79,7 @@ The simplest way is to specify the user and password in the URL:
 git clone hg::https://user:password@bitbucket.org/user/repo
 --------------------------------------
 
-You can also use the http://mercurial.selenic.com/wiki/SchemesExtension[schemes extension]:
+You can also use the https://mercurial-scm.org/wiki/SchemesExtension[schemes extension]:
 
 --------------------------------------
 [auth]
@@ -87,11 +89,7 @@ bb.password = password
 --------------------------------------
 
 Finally, you can also use the
-https://pypi.python.org/pypi/mercurial_keyring[keyring extension].
-
-However, some of these features require very new versions of 'git-remote-hg',
-so you might have better luck simply specifying the username and password in
-the URL.
+https://pypi.org/project/mercurial_keyring[keyring extension].
 
 === Caveats ===
 
@@ -109,15 +107,16 @@ Closed branches are not supported: they are not shown and you can't close or
 reopen. Additionally in certain rare situations a synchronization issue can
 occur (https://github.com/felipec/git/issues/65[Bug #65]).
 
-Limitations of the remote-helpers' framework apply.
+Limitations of Git's https://git-scm.com/docs/gitremote-helpers[remote-helpers]
+framework apply.
 
 == Other projects ==
 
-There are other 'git-remote-hg' projects out there, but this is the original,
+There are other `git-remote-hg` projects out there, but this is the original,
 which was distributed officially in the Git project.
 
 Over the years many similar tools have died out, the only actively maintained
-altnernative is mnauw's fork of this project:
+alternative is mnauw's fork of this project:
 https://github.com/mnauw/git-remote-hg[mnauw/git-remote-hg]. I've merged some of
 his patches, and he has merged some of my patches, so the projects are mostly in
 sync, but not quite. In particular Nauwelaerts' fork has many administrative
