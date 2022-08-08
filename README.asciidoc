@@ -53,7 +53,7 @@ it's a big one. Otherwise lots of space will be wasted.
 The newest supported version of Mercurial is 6.1 but only through Python 2. The
 oldest one is 2.4.
 
-Support for Python 3 is on the way.
+Support for Python 3 is ready, but will be released in the next version soon.
 
 === Pushing branches ===
 
