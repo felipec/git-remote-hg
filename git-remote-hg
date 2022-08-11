@@ -77,6 +77,11 @@ RAW_AUTHOR_RE = re.compile('^(\w+) (?:(.+)? )?<(.*)> (\d+) ([+-]\d+)')
 
 VERSION = 2
 
+def print_data(d):
+    print('data %d' % len(d))
+    sys.stdout.flush()
+    os.write(1, d)
+
 def debug(*args):
     sys.stderr.write('DEBUG: %s\n' % repr(args))
 
@@ -311,8 +316,7 @@ def export_files(files):
 
             print("blob")
             print("mark :%u" % mark)
-            print("data %d" % len(d))
-            print(d.decode())
+            print_data(d)
 
         path = fix_file_path(f.path())
         final.append((gitmode(f.flags()), mark, path))
@@ -611,8 +615,7 @@ def export_ref(repo, name, kind, head):
         print("mark :%d" % (marks.get_mark(c.hex())))
         print("author %s" % (author))
         print("committer %s" % (committer))
-        print("data %d" % (len(desc)))
-        print(desc.decode())
+        print_data(desc)
 
         if len(parents) > 0:
             print("from :%s" % (rev_to_mark(parents[0])))
@@ -653,8 +656,7 @@ def export_ref(repo, name, kind, head):
             c = repo[rev]
             print("N inline :%u" % rev_to_mark(c))
             msg = c.hex()
-            print(("data %d" % (len(msg))))
-            print(msg.decode())
+            print_data(msg)
         print("")
 
         marks.last_note = note_mark
