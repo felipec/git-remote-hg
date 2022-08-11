@@ -741,8 +741,11 @@ def do_list(parser):
 
     for branch, heads in items:
         # only open heads
-        heads = [h for h in heads if b'close' not in repo.changelog.read(h)[5]]
-        if heads:
+        try:
+            heads = [h for h in heads if b'close' not in repo.changelog.read(h)[5]]
+            if heads:
+                branches[branch] = heads
+        except error.LookupError:
             branches[branch] = heads
 
     list_head(repo, cur)
