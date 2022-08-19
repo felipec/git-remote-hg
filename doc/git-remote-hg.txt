@@ -38,7 +38,8 @@ If you want to see Mercurial revisions as Git commit notes:
 % git config core.notesRef refs/notes/hg
 --------------------------------------
 
-If you are not interested in Mercurial permanent and global branches (aka. commit labels):
+If you are not interested in Mercurial permanent and global branches (aka.
+commit labels):
 
 --------------------------------------
 % git config --global remote-hg.track-branches false
@@ -52,7 +53,8 @@ If you want the equivalent of `hg clone --insecure`:
 % git config --global remote-hg.insecure true
 --------------------------------------
 
-If you want 'git-remote-hg' to be compatible with 'hg-git', and generate exactly the same commits:
+If you want 'git-remote-hg' to be compatible with 'hg-git', and generate exactly
+the same commits:
 
 --------------------------------------
 % git config --global remote-hg.hg-git-compat true
@@ -61,16 +63,15 @@ If you want 'git-remote-hg' to be compatible with 'hg-git', and generate exactly
 NOTES
 -----
 
-Remember to run `git gc --aggressive` after cloning a repository, specially if
+Remember to run `git gc --aggressive` after cloning a repository, especially if
 it's a big one. Otherwise lots of space will be wasted.
 
-The oldest version of Mercurial supported is 1.9. For the most part 1.8 works,
-but you might experience some issues.
+The newest supported version of Mercurial is 6.2, the oldest one is 2.4.
 
 Pushing branches
 ~~~~~~~~~~~~~~~~
 
-To push a Mercurial named branch, you need to use the "branches/" prefix:
+To push a branch, you need to use the "branches/" prefix:
 
 --------------------------------------
 % git checkout branches/next
@@ -91,7 +92,7 @@ The simplest way is to specify the user and password in the URL:
 git clone hg::https://user:password@bitbucket.org/user/repo
 --------------------------------------
 
-You can also use the http://mercurial.selenic.com/wiki/SchemesExtension[schemes extension]:
+You can also use the https://mercurial-scm.org/wiki/SchemesExtension[schemes extension]:
 
 --------------------------------------
 [auth]
@@ -101,7 +102,7 @@ bb.password = password
 --------------------------------------
 
 Finally, you can also use the
-https://pypi.python.org/pypi/mercurial_keyring[keyring extension].
+https://pypi.org/project/mercurial_keyring[keyring extension].
 
 CAVEATS
 -------
@@ -113,9 +114,9 @@ Mercurial branches and bookmarks have some limitations of Git branches: you
 can't have both 'dev/feature' and 'dev' (as Git uses files and directories to
 store them).
 
-Multiple anonymous heads (which are useless anyway) are not supported; you
+Multiple anonymous heads (which are useless anyway) are not supported: you
 would only see the latest head.
 
-Closed branches are not supported; they are not shown and you can't close or
+Closed branches are not supported: they are not shown and you can't close or
 reopen. Additionally in certain rare situations a synchronization issue can
 occur (https://github.com/felipec/git/issues/65[Bug #65]).
