@@ -497,41 +497,6 @@ def rev_to_mark(rev):
 def mark_to_rev(mark):
     return marks.to_rev(mark).encode()
 
-# Get a range of revisions in the form of a..b (git committish)
-def gitrange(repo, a, b):
-    if a == b:
-        return []
-
-    pfunc = repo.changelog.parentrevs
-    it = iter(range(b.rev(), -1, -1))
-
-    positive = []
-    pending = set([b.rev()])
-    negative = set([a.rev()])
-
-    def get_parents(rev):
-        for p in pfunc(rev):
-            if p == -1: continue
-            yield p
-
-    while pending:
-        cur = next(it)
-
-        if cur in negative:
-            negative.remove(cur)
-            for p in get_parents(cur):
-                negative.add(p)
-                pending.discard(p)
-        elif cur in pending:
-            positive.append(cur)
-            pending.remove(cur)
-            for p in get_parents(cur):
-                if p not in negative:
-                    pending.add(p)
-
-    positive.reverse()
-    return positive
-
 def export_ref(repo, name, kind, head):
     ename = '%s/%s' % (kind, name)
     try:
@@ -540,7 +505,8 @@ def export_ref(repo, name, kind, head):
     except (KeyError,error.RepoLookupError):
         tip = repo[-1]
 
-    revs = gitrange(repo, tip, head)
+    # tip..head
+    revs = repo.changelog.findmissingrevs(common={tip.rev()}, heads={head.rev()})
 
     total = len(revs)
     tip = tip.rev()
