@@ -101,6 +101,45 @@ git_log () {
 	git -C $1 fast-export --branches
 }
 
+cmp_hg_to_git_log () {
+	for x in hg git
+	do
+		hg_log hgrepo2-$x > "hg-log-$x" &&
+		git_log gitrepo-$x > "git-log-$x"
+	done &&
+
+	test_cmp hg-log-hg hg-log-git &&
+	test_cmp git-log-hg git-log-git
+}
+
+cmp_hg_to_git_log_hgrepo1 () {
+	for x in hg git
+	do
+		git_clone_$x hgrepo1 gitrepo-$x &&
+		hg_clone_$x gitrepo-$x hgrepo2-$x
+	done &&
+
+	cmp_hg_to_git_log
+}
+
+cmp_hg_to_git_manifest () {
+	for x in hg git
+	do
+		(
+		hg_clone_$x gitrepo hgrepo-$x &&
+		cd hgrepo-$x &&
+		hg_log . &&
+		eval "$1"
+		) > "output-$x" &&
+
+		git_clone_$x hgrepo-$x gitrepo2-$x &&
+		git_log gitrepo2-$x > "log-$x"
+	done &&
+
+	test_cmp output-hg output-git &&
+	test_cmp log-hg log-git
+}
+
 setup () {
 	cat > "$HOME"/.hgrc <<-EOF
 	[ui]
@@ -148,16 +187,7 @@ test_expect_success 'rename' '
 	hg commit -m "rename alpha to beta"
 	) &&
 
-	for x in hg git
-	do
-		git_clone_$x hgrepo1 gitrepo-$x &&
-		hg_clone_$x gitrepo-$x hgrepo2-$x &&
-		hg_log hgrepo2-$x > "hg-log-$x" &&
-		git_log gitrepo-$x > "git-log-$x"
-	done &&
-
-	test_cmp hg-log-hg hg-log-git &&
-	test_cmp git-log-hg git-log-git
+	cmp_hg_to_git_log_hgrepo1
 '
 
 test_expect_success 'executable bit' '
@@ -176,22 +206,7 @@ test_expect_success 'executable bit' '
 	git commit -m "clear executable bit"
 	) &&
 
-	for x in hg git
-	do
-		(
-		hg_clone_$x gitrepo hgrepo-$x &&
-		cd hgrepo-$x &&
-		hg_log . &&
-		hg manifest -r 1 -v &&
-		hg manifest -v
-		) > "output-$x" &&
-
-		git_clone_$x hgrepo-$x gitrepo2-$x &&
-		git_log gitrepo2-$x > "log-$x"
-	done &&
-
-	test_cmp output-hg output-git &&
-	test_cmp log-hg log-git
+	cmp_hg_to_git_manifest "hg manifest -v -r -1; hg manifest -v"
 '
 
 test_expect_success 'symlink' '
@@ -206,21 +221,7 @@ test_expect_success 'symlink' '
 	git commit -m "add beta"
 	) &&
 
-	for x in hg git
-	do
-		(
-		hg_clone_$x gitrepo hgrepo-$x &&
-		cd hgrepo-$x &&
-		hg_log . &&
-		hg manifest -v
-		) > "output-$x" &&
-
-		git_clone_$x hgrepo-$x gitrepo2-$x &&
-		git_log gitrepo2-$x > "log-$x"
-	done &&
-
-	test_cmp output-hg output-git &&
-	test_cmp log-hg log-git
+	cmp_hg_to_git_manifest "hg manifest -v"
 '
 
 test_expect_success 'merge conflict 1' '
@@ -244,16 +245,7 @@ test_expect_success 'merge conflict 1' '
 	hg ci -m "merge to C" -d "3 0"
 	) &&
 
-	for x in hg git
-	do
-		git_clone_$x hgrepo1 gitrepo-$x &&
-		hg_clone_$x gitrepo-$x hgrepo2-$x &&
-		hg_log hgrepo2-$x > "hg-log-$x" &&
-		git_log gitrepo-$x > "git-log-$x"
-	done &&
-
-	test_cmp hg-log-hg hg-log-git &&
-	test_cmp git-log-hg git-log-git
+	cmp_hg_to_git_log_hgrepo1
 '
 
 test_expect_success 'merge conflict 2' '
@@ -277,16 +269,7 @@ test_expect_success 'merge conflict 2' '
 	hg ci -m "merge to B" -d "3 0"
 	) &&
 
-	for x in hg git
-	do
-		git_clone_$x hgrepo1 gitrepo-$x &&
-		hg_clone_$x gitrepo-$x hgrepo2-$x &&
-		hg_log hgrepo2-$x > "hg-log-$x" &&
-		git_log gitrepo-$x > "git-log-$x"
-	done &&
-
-	test_cmp hg-log-hg hg-log-git &&
-	test_cmp git-log-hg git-log-git
+	cmp_hg_to_git_log_hgrepo1
 '
 
 test_expect_success 'converged merge' '
@@ -311,16 +294,7 @@ test_expect_success 'converged merge' '
 	hg ci -m "merge" -d "4 0"
 	) &&
 
-	for x in hg git
-	do
-		git_clone_$x hgrepo1 gitrepo-$x &&
-		hg_clone_$x gitrepo-$x hgrepo2-$x &&
-		hg_log hgrepo2-$x > "hg-log-$x" &&
-		git_log gitrepo-$x > "git-log-$x"
-	done &&
-
-	test_cmp hg-log-hg hg-log-git &&
-	test_cmp git-log-hg git-log-git
+	cmp_hg_to_git_log_hgrepo1
 '
 
 test_expect_success 'encoding' '
@@ -381,22 +355,7 @@ test_expect_success 'file removal' '
 	git commit -m "remove foo/bar"
 	) &&
 
-	for x in hg git
-	do
-		(
-		hg_clone_$x gitrepo hgrepo-$x &&
-		cd hgrepo-$x &&
-		hg_log . &&
-		hg manifest -r 3 &&
-		hg manifest
-		) > "output-$x" &&
-
-		git_clone_$x hgrepo-$x gitrepo2-$x &&
-		git_log gitrepo2-$x > "log-$x"
-	done &&
-
-	test_cmp output-hg output-git &&
-	test_cmp log-hg log-git
+	cmp_hg_to_git_manifest "hg manifest -r 3; hg manifest"
 '
 
 test_expect_success 'git tags' '
@@ -479,14 +438,10 @@ test_expect_success 'hg author' '
 		) &&
 
 		hg_push_$x hgrepo-$x gitrepo-$x &&
-		hg_clone_$x gitrepo-$x hgrepo2-$x &&
-
-		hg_log hgrepo2-$x > "hg-log-$x" &&
-		git_log gitrepo-$x > "git-log-$x"
+		hg_clone_$x gitrepo-$x hgrepo2-$x
 	done &&
 
-	test_cmp hg-log-hg hg-log-git &&
-	test_cmp git-log-hg git-log-git
+	cmp_hg_to_git_log
 '
 
 test_expect_success 'hg branch' '
@@ -514,14 +469,10 @@ test_expect_success 'hg branch' '
 		) &&
 
 		hg_push_$x hgrepo-$x gitrepo-$x &&
-		hg_clone_$x gitrepo-$x hgrepo2-$x &&
-
-		hg_log hgrepo2-$x > "hg-log-$x" &&
-		git_log gitrepo-$x > "git-log-$x"
+		hg_clone_$x gitrepo-$x hgrepo2-$x
 	done &&
 
-	test_cmp hg-log-hg hg-log-git &&
-	test_cmp git-log-hg git-log-git
+	cmp_hg_to_git_log
 '
 
 test_expect_success 'hg tags' '
