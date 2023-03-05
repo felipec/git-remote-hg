@@ -93,8 +93,9 @@ hg_push_hg () {
 }
 
 hg_log () {
-	hg -R $1 log --graph --debug |
-		grep -v 'tag: *default/'
+	hg -R $1 log --debug -r 'sort(tip:0, date)' |
+		grep -v 'tag: *default/' |
+		sed -e 's/[0-9]\+:\([0-9a-f]\{40\}\)/\1/'
 }
 
 git_log () {
@@ -232,16 +233,16 @@ test_expect_success 'merge conflict 1' '
 	hg ci -m "origin" &&
 
 	echo B > afile &&
-	hg ci -m "A->B" &&
+	hg ci -m "A->B" -d "1 0" &&
 
 	hg up -r0 &&
 	echo C > afile &&
-	hg ci -m "A->C" &&
+	hg ci -m "A->C" -d "2 0" &&
 
 	hg merge -r1 &&
 	echo C > afile &&
 	hg resolve -m afile &&
-	hg ci -m "merge to C"
+	hg ci -m "merge to C" -d "3 0"
 	) &&
 
 	for x in hg git
@@ -267,16 +268,16 @@ test_expect_success 'merge conflict 2' '
 	hg ci -m "origin" &&
 
 	echo B > afile &&
-	hg ci -m "A->B" &&
+	hg ci -m "A->B" -d "1 0" &&
 
 	hg up -r0 &&
 	echo C > afile &&
-	hg ci -m "A->C" &&
+	hg ci -m "A->C" -d "2 0" &&
 
 	hg merge -r1 || true &&
 	echo B > afile &&
 	hg resolve -m afile &&
-	hg ci -m "merge to B"
+	hg ci -m "merge to B" -d "3 0"
 	) &&
 
 	for x in hg git
@@ -302,17 +303,17 @@ test_expect_success 'converged merge' '
 	hg ci -m "origin" &&
 
 	echo B > afile &&
-	hg ci -m "A->B" &&
+	hg ci -m "A->B" -d "1 0" &&
 
 	echo C > afile &&
-	hg ci -m "B->C" &&
+	hg ci -m "B->C" -d "2 0" &&
 
 	hg up -r0 &&
 	echo C > afile &&
-	hg ci -m "A->C" &&
+	hg ci -m "A->C" -d "3 0" &&
 
 	hg merge -r2 || true &&
-	hg ci -m "merge"
+	hg ci -m "merge" -d "4 0"
 	) &&
 
 	for x in hg git
