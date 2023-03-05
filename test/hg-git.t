@@ -6,6 +6,8 @@
 # https://bitbucket.org/durin42/hg-git/src
 #
 
+# shellcheck disable=SC2016,SC2034,SC2086,SC2164,SC1091
+
 test_description='Test remote-hg output compared to hg-git'
 
 . ./test-lib.sh
@@ -36,7 +38,11 @@ fi
 # clone to a git repo with git
 git_clone_git () {
 	git clone -q "hg::$1" $2 &&
-	(cd $2 && git checkout master && git branch -D default)
+	(
+	cd $2 &&
+	git checkout master &&
+	{ git branch -D default || true ;}
+	)
 }
 
 # clone to an hg repo with git
@@ -57,7 +63,7 @@ git_clone_hg () {
 	git init -q $2 &&
 	cd $1 &&
 	hg bookmark -i -f -r tip master &&
-	hg -q push -r master ../$2 || true
+	{ hg -q push -r master ../$2 || true ;}
 	)
 }
 
@@ -73,8 +79,8 @@ hg_push_git () {
 	git checkout -q -b tmp &&
 	git fetch -q "hg::../$1" 'refs/tags/*:refs/tags/*' 'refs/heads/*:refs/heads/*' &&
 	git branch -D default &&
-	git checkout -q @{-1} &&
-	git branch -q -D tmp 2> /dev/null || true
+	git checkout -q '@{-1}' &&
+	{ git branch -q -D tmp 2> /dev/null || true ;}
 	)
 }
 
@@ -82,44 +88,43 @@ hg_push_git () {
 hg_push_hg () {
 	(
 	cd $1 &&
-	hg -q push ../$2 || true
+	{ hg -q push ../$2 || true ;}
 	)
 }
 
 hg_log () {
-	hg -R $1 log --graph --debug > log &&
-	grep -v 'tag: *default/' log
+	hg -R $1 log --graph --debug |
+		grep -v 'tag: *default/'
 }
 
 git_log () {
-	git --git-dir=$1/.git fast-export --branches
+	git -C $1 fast-export --branches
 }
 
 setup () {
-	cat > "$HOME"/.hgrc <<-EOF &&
+	cat > "$HOME"/.hgrc <<-EOF
 	[ui]
 	username = A U Thor <author@example.com>
 	[defaults]
-	backout = -d "0 0"
 	commit = -d "0 0"
-	debugrawcommit = -d "0 0"
 	tag = -d "0 0"
 	[extensions]
 	$hggit =
-	graphlog =
 	[git]
 	debugextrainmessage = 1
 	EOF
-	git config --global receive.denycurrentbranch warn
-	git config --global remote-hg.hg-git-compat true
-	git config --global remote-hg.track-branches false
 
-	HGEDITOR=true
-	HGMERGE=true
+	cat > "$HOME"/.gitconfig <<-EOF
+	[remote-hg]
+		hg-git-compat = true
+		track-branches = false
+	EOF
 
-	GIT_AUTHOR_DATE="2007-01-01 00:00:00 +0230"
-	GIT_COMMITTER_DATE="$GIT_AUTHOR_DATE"
-	export HGEDITOR HGMERGE GIT_AUTHOR_DATE GIT_COMMITTER_DATE
+	export HGEDITOR=true
+	export HGMERGE=true
+
+	export GIT_AUTHOR_DATE="2007-01-01 00:00:00 +0230"
+	export GIT_COMMITTER_DATE="$GIT_AUTHOR_DATE"
 }
 
 setup
