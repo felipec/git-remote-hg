@@ -203,10 +203,6 @@ def add_component(id, url, **args)
 end
 
 hg_checkout_fix = lambda do |version|
-  if check_version(version, '5.7')
-    run_cmd %W[hg import -q --no-commit #{__dir__}/hg_revert_5.7.patch]
-  end
-
   FileUtils.cp('hg', "#{$builddir}/bin/")
 
   return if check_version(version, '4.3')
