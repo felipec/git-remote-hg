@@ -129,9 +129,15 @@ setup () {
 
 setup
 
-test_expect_success 'rename' '
-	test_when_finished "rm -rf gitrepo* hgrepo*" &&
+# save old function
+eval "old_$(declare -f test_expect_success)"
 
+test_expect_success () {
+	old_test_expect_success "$1" "
+	test_when_finished \"rm -rf gitrepo* hgrepo*\" && $2"
+}
+
+test_expect_success 'rename' '
 	(
 	hg init hgrepo1 &&
 	cd hgrepo1 &&
@@ -155,8 +161,6 @@ test_expect_success 'rename' '
 '
 
 test_expect_success 'executable bit' '
-	test_when_finished "rm -rf gitrepo* hgrepo*" &&
-
 	(
 	git init -q gitrepo &&
 	cd gitrepo &&
@@ -191,8 +195,6 @@ test_expect_success 'executable bit' '
 '
 
 test_expect_success 'symlink' '
-	test_when_finished "rm -rf gitrepo* hgrepo*" &&
-
 	(
 	git init -q gitrepo &&
 	cd gitrepo &&
@@ -222,8 +224,6 @@ test_expect_success 'symlink' '
 '
 
 test_expect_success 'merge conflict 1' '
-	test_when_finished "rm -rf gitrepo* hgrepo*" &&
-
 	(
 	hg init hgrepo1 &&
 	cd hgrepo1 &&
@@ -257,8 +257,6 @@ test_expect_success 'merge conflict 1' '
 '
 
 test_expect_success 'merge conflict 2' '
-	test_when_finished "rm -rf gitrepo* hgrepo*" &&
-
 	(
 	hg init hgrepo1 &&
 	cd hgrepo1 &&
@@ -292,8 +290,6 @@ test_expect_success 'merge conflict 2' '
 '
 
 test_expect_success 'converged merge' '
-	test_when_finished "rm -rf gitrepo* hgrepo*" &&
-
 	(
 	hg init hgrepo1 &&
 	cd hgrepo1 &&
@@ -328,8 +324,6 @@ test_expect_success 'converged merge' '
 '
 
 test_expect_success 'encoding' '
-	test_when_finished "rm -rf gitrepo* hgrepo*" &&
-
 	(
 	git init -q gitrepo &&
 	cd gitrepo &&
@@ -368,8 +362,6 @@ test_expect_success 'encoding' '
 '
 
 test_expect_success 'file removal' '
-	test_when_finished "rm -rf gitrepo* hgrepo*" &&
-
 	(
 	git init -q gitrepo &&
 	cd gitrepo &&
@@ -408,8 +400,6 @@ test_expect_success 'file removal' '
 '
 
 test_expect_success 'git tags' '
-	test_when_finished "rm -rf gitrepo* hgrepo*" &&
-
 	(
 	git init -q gitrepo &&
 	cd gitrepo &&
@@ -435,8 +425,6 @@ test_expect_success 'git tags' '
 '
 
 test_expect_success 'hg author' '
-	test_when_finished "rm -rf gitrepo* hgrepo*" &&
-
 	for x in hg git
 	do
 		(
@@ -502,8 +490,6 @@ test_expect_success 'hg author' '
 '
 
 test_expect_success 'hg branch' '
-	test_when_finished "rm -rf gitrepo* hgrepo*" &&
-
 	for x in hg git
 	do
 		(
@@ -539,8 +525,6 @@ test_expect_success 'hg branch' '
 '
 
 test_expect_success 'hg tags' '
-	test_when_finished "rm -rf gitrepo* hgrepo*" &&
-
 	for x in hg git
 	do
 		(
