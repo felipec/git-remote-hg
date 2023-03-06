@@ -1,6 +1,6 @@
 RM ?= rm -f
 
-T = main.t bidi.t
+T = $(wildcard *.t)
 SHARNESS_TEST_DIRECTORY := $(CURDIR)
 
 export SHARNESS_TEST_DIRECTORY
