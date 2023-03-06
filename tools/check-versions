@@ -62,13 +62,10 @@ class Component
 
   attr_reader :id
 
-  def initialize(id, url, kind: nil, **args)
+  def initialize(id, url, **args)
     @id = id
     @url = url
-    @kind = kind || (url.start_with?('git') ? :git : :hg)
-    @tool = @kind.to_s
     @checkout_fix = args[:checkout_fix]
-    @version_format = args[:version_format]
   end
 
   def dir
@@ -76,25 +73,16 @@ class Component
   end
 
   def get_version(version)
-    return @kind == :hg ? 'tip' : '@' if version == '@'
-    @version_format ? @version_format % version : version
+    version == '@' ? 'tip' : version
   end
 
   def clone
-    run_cmd [@tool, 'clone', '-q', @url, dir]
+    run_cmd ['hg', 'clone', '-q', @url, dir]
   end
 
   def checkout(version)
     Dir.chdir(dir) do
-      case @kind
-      when :hg
-        cmd = %w[update --clean]
-      when :git
-        cmd = %w[reset --hard]
-      else
-        cmd = %w[checkout]
-      end
-      run_cmd [@tool] + cmd + ['-q', get_version(version)]
+      run_cmd %w[hg update --clean -q] << get_version(version)
       @checkout_fix.call(version) if @checkout_fix
     end
   end
