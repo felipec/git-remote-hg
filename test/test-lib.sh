@@ -1,6 +1,7 @@
 #!/bin/sh
 
-. ./sharness.sh
+: "${SHARNESS_TEST_SRCDIR:=$(cd "$(dirname "${BASH_SOURCE-$0}")" && pwd)}"
+. "$SHARNESS_TEST_SRCDIR"/sharness.sh
 
 test_set_prereq PYTHON
 
