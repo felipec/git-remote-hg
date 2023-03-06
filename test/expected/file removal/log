@@ -1,0 +1,60 @@
+blob
+mark :1
+data 6
+alpha
+
+reset refs/heads/master
+commit refs/heads/master
+mark :2
+author A U Thor <author@example.com> 1167600600 +0230
+committer C O Mitter <committer@example.com> 1167600600 +0230
+data 10
+add alpha
+M 100644 :1 alpha
+
+blob
+mark :3
+data 5
+beta
+
+commit refs/heads/master
+mark :4
+author A U Thor <author@example.com> 1167600600 +0230
+committer C O Mitter <committer@example.com> 1167600600 +0230
+data 9
+add beta
+from :2
+M 100644 :3 beta
+
+blob
+mark :5
+data 5
+blah
+
+commit refs/heads/master
+mark :6
+author A U Thor <author@example.com> 1167600600 +0230
+committer C O Mitter <committer@example.com> 1167600600 +0230
+data 8
+add foo
+from :4
+M 100644 :5 foo/bar
+
+commit refs/heads/master
+mark :7
+author A U Thor <author@example.com> 1167600600 +0230
+committer C O Mitter <committer@example.com> 1167600600 +0230
+data 13
+remove alpha
+from :6
+D alpha
+
+commit refs/heads/master
+mark :8
+author A U Thor <author@example.com> 1167600600 +0230
+committer C O Mitter <committer@example.com> 1167600600 +0230
+data 15
+remove foo/bar
+from :7
+D foo/bar
+

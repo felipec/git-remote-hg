@@ -1,0 +1,134 @@
+changeset:   307c03466a07cccafaafc991f36d695d6ad595f3
+bookmark:    master
+tag:         tip
+phase:       draft
+parent:      5832614d351449a2f8d6f7ccbef4877c2b18cbe0
+parent:      -0000000000000000000000000000000000000000
+manifest:    e8f1b3ae088bdd25e3570a4953ccb6b948524473
+user:        test <test ?at> example <dot> com>
+date:        Thu Jan 01 00:00:00 1970 +0000
+files+:      iota
+extra:       branch=default
+description:
+add iota
+
+
+changeset:   5832614d351449a2f8d6f7ccbef4877c2b18cbe0
+phase:       draft
+parent:      e52ded4aca5d210ed58c63158d64fb911876f345
+parent:      -0000000000000000000000000000000000000000
+manifest:    7e4875db7e2970c529f462520121d333e514bf4d
+user:        test ?test@example.com <test ?test@example.com>
+date:        Thu Jan 01 00:00:00 1970 +0000
+files+:      theta
+extra:       branch=default
+description:
+add theta
+
+
+changeset:   e52ded4aca5d210ed58c63158d64fb911876f345
+phase:       draft
+parent:      9a34ba7d552e8b73ad306baf1d1eb83de0f74c12
+parent:      -0000000000000000000000000000000000000000
+manifest:    ef03e54a9916ac3158c9686503dd4f609c26b3ec
+user:        test <test@example.com>
+date:        Thu Jan 01 00:00:00 1970 +0000
+files+:      eta
+extra:       branch=default
+description:
+add eta
+
+
+changeset:   9a34ba7d552e8b73ad306baf1d1eb83de0f74c12
+phase:       draft
+parent:      6281edc25b9fe9538407726f044a9a61ac7ba5bc
+parent:      -0000000000000000000000000000000000000000
+manifest:    616201b85baf7ed02d41f6a7deb04c52009d8483
+user:        test
+date:        Thu Jan 01 00:00:00 1970 +0000
+files+:      zeta
+extra:       branch=default
+description:
+add zeta
+
+
+changeset:   6281edc25b9fe9538407726f044a9a61ac7ba5bc
+phase:       draft
+parent:      4c7841053c633cb51f8375555d08b6bea54fc4cb
+parent:      -0000000000000000000000000000000000000000
+manifest:    c703b3d7be8a0638047142f57ff83d4e94b5d1fa
+user:        name <test@example.com>
+date:        Thu Jan 01 00:00:00 1970 +0000
+files+:      epsilon
+extra:       branch=default
+description:
+add epsilon
+
+
+changeset:   4c7841053c633cb51f8375555d08b6bea54fc4cb
+phase:       draft
+parent:      fa8f26586397dd4797842e9300c8db221fe5514d
+parent:      -0000000000000000000000000000000000000000
+manifest:    300b54001cbfa5d027b4bccdb594ccb463adb55d
+user:        name <test@example.com>
+date:        Thu Jan 01 00:00:00 1970 +0000
+files+:      delta
+extra:       branch=default
+description:
+add delta
+
+
+changeset:   fa8f26586397dd4797842e9300c8db221fe5514d
+phase:       draft
+parent:      2708ff417fb7e2c0a4f9596286c0a398553fa793
+parent:      -0000000000000000000000000000000000000000
+manifest:    45b0c483a79307d14f7e234feb78776478f828ec
+user:        <test@example.com>
+date:        Thu Jan 01 00:00:00 1970 +0000
+files+:      gamma
+extra:       branch=default
+description:
+add gamma
+
+
+changeset:   2708ff417fb7e2c0a4f9596286c0a398553fa793
+phase:       draft
+parent:      8c51e5fe974fe1cc63a56bbfad343f9ede6bed30
+parent:      -0000000000000000000000000000000000000000
+manifest:    c305998040b12e956b998318982c9eb92d2d7b28
+user:        test <test@example.com> (comment)
+date:        Thu Jan 01 00:00:00 1970 +0000
+files:       beta
+extra:       branch=default
+description:
+modify beta
+
+
+changeset:   8c51e5fe974fe1cc63a56bbfad343f9ede6bed30
+phase:       draft
+parent:      362b656574c3c9e89fa7f2d7a943091dc93bce4d
+parent:      -0000000000000000000000000000000000000000
+manifest:    f0bd6fbafbaebe4bb59c35108428f6fce152431d
+user:        test
+date:        Thu Jan 01 00:00:00 1970 +0000
+files+:      beta
+extra:       branch=default
+description:
+add beta
+
+
+changeset:   362b656574c3c9e89fa7f2d7a943091dc93bce4d
+bookmark:    not-master
+phase:       draft
+parent:      -0000000000000000000000000000000000000000
+parent:      -0000000000000000000000000000000000000000
+manifest:    8b8a0e87dfd7a0706c0524afa8ba67e20544cbf0
+user:        A U Thor <author@example.com>
+date:        Mon Jan 01 00:00:00 2007 +0230
+files+:      alpha
+extra:       branch=default
+extra:       committer=C O Mitter <committer@example.com> 1167600600 -9000
+description:
+add alpha
+
+

@@ -1,0 +1,75 @@
+changeset:   54f595cbdf1f516dc3b2b25faa6f051aae712f5d
+bookmark:    master
+tag:         tip
+phase:       draft
+parent:      7fe32a9185c6d37db430ee5248cdb2ae66582478
+parent:      -0000000000000000000000000000000000000000
+manifest:    3f83f42fa00fb0cac14a83aa48baac2f287a9329
+user:        A U Thor <author@example.com>
+date:        Mon Jan 01 00:00:00 2007 +0230
+files-:      foo/bar
+extra:       branch=default
+extra:       committer=C O Mitter <committer@example.com> 1167600600 -9000
+description:
+remove foo/bar
+
+
+changeset:   7fe32a9185c6d37db430ee5248cdb2ae66582478
+phase:       draft
+parent:      a21fd0b26a555427c2ea72f8ed37190f6216f705
+parent:      -0000000000000000000000000000000000000000
+manifest:    cd10925837609b99d345c44c85bd1f73d742cbbc
+user:        A U Thor <author@example.com>
+date:        Mon Jan 01 00:00:00 2007 +0230
+files-:      alpha
+extra:       branch=default
+extra:       committer=C O Mitter <committer@example.com> 1167600600 -9000
+description:
+remove alpha
+
+
+changeset:   a21fd0b26a555427c2ea72f8ed37190f6216f705
+phase:       draft
+parent:      7cd99375c843931bd8959b766a94e050f428512b
+parent:      -0000000000000000000000000000000000000000
+manifest:    a6ee442a94bfc6fb0b7d717183bb8b4534ca4ccd
+user:        A U Thor <author@example.com>
+date:        Mon Jan 01 00:00:00 2007 +0230
+files+:      foo/bar
+extra:       branch=default
+extra:       committer=C O Mitter <committer@example.com> 1167600600 -9000
+description:
+add foo
+
+
+changeset:   7cd99375c843931bd8959b766a94e050f428512b
+phase:       draft
+parent:      362b656574c3c9e89fa7f2d7a943091dc93bce4d
+parent:      -0000000000000000000000000000000000000000
+manifest:    f0bd6fbafbaebe4bb59c35108428f6fce152431d
+user:        A U Thor <author@example.com>
+date:        Mon Jan 01 00:00:00 2007 +0230
+files+:      beta
+extra:       branch=default
+extra:       committer=C O Mitter <committer@example.com> 1167600600 -9000
+description:
+add beta
+
+
+changeset:   362b656574c3c9e89fa7f2d7a943091dc93bce4d
+phase:       draft
+parent:      -0000000000000000000000000000000000000000
+parent:      -0000000000000000000000000000000000000000
+manifest:    8b8a0e87dfd7a0706c0524afa8ba67e20544cbf0
+user:        A U Thor <author@example.com>
+date:        Mon Jan 01 00:00:00 2007 +0230
+files+:      alpha
+extra:       branch=default
+extra:       committer=C O Mitter <committer@example.com> 1167600600 -9000
+description:
+add alpha
+
+
+beta
+foo/bar
+beta

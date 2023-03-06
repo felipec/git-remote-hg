@@ -1,0 +1,27 @@
+blob
+mark :1
+data 6
+alpha
+
+reset refs/heads/master
+commit refs/heads/master
+mark :2
+author A U Thor <author@example.com> 1167600600 +0230
+committer C O Mitter <committer@example.com> 1167600600 +0230
+data 10
+add alpha
+M 100644 :1 alpha
+
+blob
+mark :3
+data 5
+alpha
+commit refs/heads/master
+mark :4
+author A U Thor <author@example.com> 1167600600 +0230
+committer C O Mitter <committer@example.com> 1167600600 +0230
+data 9
+add beta
+from :2
+M 120000 :3 beta
+

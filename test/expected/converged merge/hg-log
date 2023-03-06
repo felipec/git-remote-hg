@@ -1,0 +1,67 @@
+changeset:   9a6668f453c3003b71e11bb8d7572af57a7ce891
+phase:       draft
+parent:      -0000000000000000000000000000000000000000
+parent:      -0000000000000000000000000000000000000000
+manifest:    331ac2e605f2e6092ccb3802244a65b71f3be726
+user:        A U Thor <author@example.com>
+date:        Thu Jan 01 00:00:00 1970 +0000
+files+:      afile
+extra:       branch=default
+description:
+origin
+
+
+changeset:   ead35d346ecb18ce9d9d54604ff62b41caa196ce
+phase:       draft
+parent:      9a6668f453c3003b71e11bb8d7572af57a7ce891
+parent:      -0000000000000000000000000000000000000000
+manifest:    894f8ad9a84f743d52747963d0b9f4e9cf37d489
+user:        A U Thor <author@example.com>
+date:        Thu Jan 01 00:00:01 1970 +0000
+files:       afile
+extra:       branch=default
+description:
+A->B
+
+
+changeset:   541c7bc8b2d01c8bf71b2298d17edcda120e49bf
+phase:       draft
+parent:      ead35d346ecb18ce9d9d54604ff62b41caa196ce
+parent:      -0000000000000000000000000000000000000000
+manifest:    04dae4001cb1fb2384111589720617c4b742044c
+user:        A U Thor <author@example.com>
+date:        Thu Jan 01 00:00:02 1970 +0000
+files:       afile
+extra:       branch=default
+description:
+B->C
+
+
+changeset:   5694aadcd7171ecb9768b13e29d027e22a360d44
+phase:       draft
+parent:      9a6668f453c3003b71e11bb8d7572af57a7ce891
+parent:      -0000000000000000000000000000000000000000
+manifest:    6efc6bb8e097947aa212887bdb01fb89dfa3de13
+user:        A U Thor <author@example.com>
+date:        Thu Jan 01 00:00:03 1970 +0000
+files:       afile
+extra:       branch=default
+description:
+A->C
+
+
+changeset:   9ee75b4362cc15f9110d6538b2f1c9f0cf14825a
+bookmark:    master
+tag:         tip
+phase:       draft
+parent:      5694aadcd7171ecb9768b13e29d027e22a360d44
+parent:      541c7bc8b2d01c8bf71b2298d17edcda120e49bf
+manifest:    eb9f4687448653e876d787cd6f2e59140680ff09
+user:        A U Thor <author@example.com>
+date:        Thu Jan 01 00:00:04 1970 +0000
+files:       afile
+extra:       branch=default
+description:
+merge
+
+

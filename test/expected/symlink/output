@@ -1,0 +1,32 @@
+changeset:   87cbc97576079d3dfef04c678bfc8ab69999ebdf
+bookmark:    master
+tag:         tip
+phase:       draft
+parent:      362b656574c3c9e89fa7f2d7a943091dc93bce4d
+parent:      -0000000000000000000000000000000000000000
+manifest:    4950f48a7f5b0ce6f31c2f4307e296dbac652026
+user:        A U Thor <author@example.com>
+date:        Mon Jan 01 00:00:00 2007 +0230
+files+:      beta
+extra:       branch=default
+extra:       committer=C O Mitter <committer@example.com> 1167600600 -9000
+description:
+add beta
+
+
+changeset:   362b656574c3c9e89fa7f2d7a943091dc93bce4d
+phase:       draft
+parent:      -0000000000000000000000000000000000000000
+parent:      -0000000000000000000000000000000000000000
+manifest:    8b8a0e87dfd7a0706c0524afa8ba67e20544cbf0
+user:        A U Thor <author@example.com>
+date:        Mon Jan 01 00:00:00 2007 +0230
+files+:      alpha
+extra:       branch=default
+extra:       committer=C O Mitter <committer@example.com> 1167600600 -9000
+description:
+add alpha
+
+
+644   alpha
+644 @ beta

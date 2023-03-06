@@ -1,0 +1,29 @@
+changeset:   a985b184598fd779e53576c65c5dd1d274736c73
+bookmark:    master
+tag:         tip
+phase:       draft
+parent:      0558a161e3ca0d59f5f165e3182402d9f1e574a8
+parent:      -0000000000000000000000000000000000000000
+manifest:    e353b4d5282d044ad738398fd32d0b684d04a14b
+user:        A U Thor <author@example.com>
+date:        Thu Jan 01 00:00:00 1970 +0000
+files+:      beta
+files-:      alpha
+extra:       branch=default
+description:
+rename alpha to beta
+
+
+changeset:   0558a161e3ca0d59f5f165e3182402d9f1e574a8
+phase:       draft
+parent:      -0000000000000000000000000000000000000000
+parent:      -0000000000000000000000000000000000000000
+manifest:    8b8a0e87dfd7a0706c0524afa8ba67e20544cbf0
+user:        A U Thor <author@example.com>
+date:        Thu Jan 01 00:00:00 1970 +0000
+files+:      alpha
+extra:       branch=default
+description:
+add alpha
+
+
