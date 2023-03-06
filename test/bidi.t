@@ -8,8 +8,7 @@
 
 test_description='Test bidirectionality of remote-hg'
 
-test -n "$TEST_DIRECTORY" || TEST_DIRECTORY=$(dirname $0)/
-. "$TEST_DIRECTORY"/test-lib.sh
+. ./test-lib.sh
 
 if ! test_have_prereq PYTHON
 then
