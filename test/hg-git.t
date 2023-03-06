@@ -443,7 +443,7 @@ test_expect_success 'hg tags' '
 	hg_clone gitrepo hgrepo2 &&
 
 	(
-	git --git-dir=gitrepo/.git tag -l &&
+	git -C gitrepo tag -l &&
 	hg_log hgrepo2 &&
 	cat hgrepo2/.hgtags
 	) > output &&
