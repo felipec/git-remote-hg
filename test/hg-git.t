@@ -101,6 +101,10 @@ git_log () {
 	git -C $1 fast-export --branches
 }
 
+test_cmp_expected () {
+	test_cmp "${1}-hg" "${1}-git"
+}
+
 cmp_hg_to_git_log () {
 	for x in hg git
 	do
@@ -108,8 +112,8 @@ cmp_hg_to_git_log () {
 		git_log gitrepo-$x > "git-log-$x"
 	done &&
 
-	test_cmp hg-log-hg hg-log-git &&
-	test_cmp git-log-hg git-log-git
+	test_cmp_expected hg-log &&
+	test_cmp_expected git-log
 }
 
 cmp_hg_to_git_log_hgrepo1 () {
@@ -136,8 +140,8 @@ cmp_hg_to_git_manifest () {
 		git_log gitrepo2-$x > "log-$x"
 	done &&
 
-	test_cmp output-hg output-git &&
-	test_cmp log-hg log-git
+	test_cmp_expected output &&
+	test_cmp_expected log
 }
 
 setup () {
@@ -331,8 +335,8 @@ test_expect_success 'encoding' '
 		git_log gitrepo2-$x > "git-log-$x"
 	done &&
 
-	test_cmp hg-log-hg hg-log-git &&
-	test_cmp git-log-hg git-log-git
+	test_cmp_expected hg-log &&
+	test_cmp_expected git-log
 '
 
 test_expect_success 'file removal' '
@@ -380,7 +384,7 @@ test_expect_success 'git tags' '
 		hg_log hgrepo-$x > "log-$x"
 	done &&
 
-	test_cmp log-hg log-git
+	test_cmp_expected log
 '
 
 test_expect_success 'hg author' '
@@ -506,7 +510,7 @@ test_expect_success 'hg tags' '
 		) > "output-$x"
 	done &&
 
-	test_cmp output-hg output-git
+	test_cmp_expected output
 '
 
 test_done
