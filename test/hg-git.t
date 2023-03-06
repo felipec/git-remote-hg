@@ -94,8 +94,7 @@ hg_push_hg () {
 
 hg_log () {
 	hg -R $1 log --debug -r 'sort(tip:0, date)' |
-		grep -v 'tag: *default/' |
-		sed -e 's/[0-9]\+:\([0-9a-f]\{40\}\)/\1/'
+		sed -e '/tag: *default/d' -e 's/[0-9]\+:\([0-9a-f]\{40\}\)/\1/'
 }
 
 git_log () {
