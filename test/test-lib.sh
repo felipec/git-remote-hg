@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 : "${SHARNESS_TEST_SRCDIR:=$(cd "$(dirname "${BASH_SOURCE-$0}")" && pwd)}"
 . "$SHARNESS_TEST_SRCDIR"/sharness.sh

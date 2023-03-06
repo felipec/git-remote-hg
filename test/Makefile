@@ -11,7 +11,7 @@ test: $(T)
 	$(MAKE) clean
 
 $(T):
-	$(SHELL) $@ $(TEST_OPTS)
+	./$@ $(TEST_OPTS)
 
 clean:
 	$(RM) -r 'trash directory'.* test-results
