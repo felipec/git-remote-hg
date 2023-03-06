@@ -14,12 +14,6 @@ test_description='Test remote-hg output compared to hg-git'
 
 export EXPECTED_DIR="$SHARNESS_TEST_DIRECTORY/expected"
 
-if ! python -c 'import mercurial' > /dev/null 2>&1
-then
-	skip_all='skipping remote-hg tests; mercurial not available'
-	test_done
-fi
-
 git_clone () {
 	git clone -q "hg::$1" $2 &&
 	(

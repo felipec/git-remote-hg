@@ -10,12 +10,6 @@ test_description='Test bidirectionality of remote-hg'
 
 . ./test-lib.sh
 
-if ! python -c 'import mercurial' > /dev/null 2>&1
-then
-	skip_all='skipping remote-hg tests; mercurial not available'
-	test_done
-fi
-
 # clone to a git repo
 git_clone () {
 	git clone -q "hg::$1" $2

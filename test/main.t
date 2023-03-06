@@ -10,12 +10,6 @@ test_description='Test remote-hg'
 
 . ./test-lib.sh
 
-if ! python -c 'import mercurial' > /dev/null 2>&1
-then
-	skip_all='skipping remote-hg tests; mercurial not available'
-	test_done
-fi
-
 check () {
 	echo $3 > expected &&
 	git --git-dir=$1/.git log --format='%s' -1 $2 > actual &&
