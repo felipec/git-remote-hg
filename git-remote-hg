@@ -15,6 +15,7 @@
 from mercurial import hg, ui, bookmarks, context, encoding
 from mercurial import node, error, extensions, discovery, util
 from mercurial import changegroup
+from mercurial import exchange
 
 import re
 import sys
@@ -411,12 +412,6 @@ def updatebookmarks(repo, peer):
             localmarks.applychanges(repo, tr, changes.items())
         else:
             localmarks.update(changes)
-            if check_version(3, 2):
-                localmarks.recordchange(tr)
-            elif check_version(2, 5):
-                localmarks.write()
-            else:
-                bookmarks.write(repo)
         tr.close()
     finally:
         tr.release()
@@ -481,11 +476,7 @@ def get_repo(url, alias):
         except:
             die('Repository error')
 
-        if check_version(3, 0):
-            from mercurial import exchange
-            exchange.pull(repo, peer, heads=None, force=True)
-        else:
-            repo.pull(peer, heads=None, force=True)
+        exchange.pull(repo, peer, heads=None, force=True)
 
         updatebookmarks(repo, peer)
 
@@ -792,10 +783,8 @@ def c_style_unescape(string):
 def make_memfilectx(repo, changectx, path, data, islink=False, isexec=False, copied=None):
     if check_version(4, 5):
         return context.memfilectx(repo, changectx, path, data, islink, isexec, copied)
-    elif check_version(3, 1):
-        return context.memfilectx(repo, path, data, islink, isexec, copied)
     else:
-        return context.memfilectx(path, data, islink, isexec, copied)
+        return context.memfilectx(repo, path, data, islink, isexec, copied)
 
 def parse_commit(parser):
     from_mark = merge_mark = None
@@ -847,12 +836,9 @@ def parse_commit(parser):
     def getfilectx(repo, memctx, f):
         of = files[f]
         if 'deleted' in of:
-            if check_version(3, 2):
-                return None
-            else:
-                raise IOError
+            return None
         if 'ctx' in of:
-            if mode == 'hg' and check_version(3, 2):
+            if mode == 'hg':
                 # force the creation of a new filelog
                 ctx = of['ctx']
                 is_exec = ctx.isexec()
@@ -1059,10 +1045,7 @@ def checkheads(repo, remote, p_revs):
     for branch, heads in new.items():
         old = [repo.changelog.rev(x) for x in remotemap[branch]]
         for rev in heads:
-            if check_version(2, 3):
-                ancestors = repo.changelog.ancestors([rev], stoprev=min(old))
-            else:
-                ancestors = repo.changelog.ancestors(rev)
+            ancestors = repo.changelog.ancestors([rev], stoprev=min(old))
             found = False
 
             for x in old:
@@ -1100,17 +1083,10 @@ def push_unsafe(repo, remote, parsed_refs, p_revs):
         # Nothing to push
         return True
 
-    if check_version(4, 0):
-        if check_version(4, 4):
-            cg = changegroup.makechangegroup(repo, outgoing, b'01', b'push')
-        else:
-            cg = changegroup.getchangegroup(repo, b'push', outgoing)
-    elif check_version(3, 2):
-        cg = changegroup.getchangegroup(repo, b'push', heads=list(p_revs), common=common)
-    elif check_version(3, 0):
-        cg = changegroup.getbundle(repo, b'push', heads=list(p_revs), common=common)
+    if check_version(4, 4):
+        cg = changegroup.makechangegroup(repo, outgoing, b'01', b'push')
     else:
-        cg = repo.getbundle(b'push', heads=list(p_revs), common=common)
+        cg = changegroup.getchangegroup(repo, b'push', outgoing)
 
     unbundle = remote.capable(b'unbundle')
     if unbundle:
@@ -1240,10 +1216,7 @@ def do_export(parser):
                 tagnode, branch = write_tag(parser.repo, tag, node, msg, author)
                 p_revs[tagnode] = 'refs/heads/branches/' + gitref(branch)
             else:
-                if check_version(2, 4):
-                    vfs = parser.repo.vfs
-                else:
-                    vfs = parser.repo.opener
+                vfs = parser.repo.vfs
                 fp = vfs(b'localtags', b'a')
                 fp.write(b'%s %s\n' % (node, tag))
                 fp.close()
