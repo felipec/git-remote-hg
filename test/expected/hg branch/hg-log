@@ -1,0 +1,44 @@
+changeset:   3320583a8de0b31511f499a4ab3426bee1a7f478
+branch:      gamma
+bookmark:    master
+tag:         tip
+phase:       draft
+parent:      5889597089fea2d144989baa9427d1a080293fdb
+parent:      -0000000000000000000000000000000000000000
+manifest:    e353b4d5282d044ad738398fd32d0b684d04a14b
+user:        A U Thor <author@example.com>
+date:        Thu Jan 01 00:00:00 1970 +0000
+extra:       branch=gamma
+description:
+started branch gamma
+
+
+changeset:   5889597089fea2d144989baa9427d1a080293fdb
+phase:       draft
+parent:      362b656574c3c9e89fa7f2d7a943091dc93bce4d
+parent:      -0000000000000000000000000000000000000000
+manifest:    e353b4d5282d044ad738398fd32d0b684d04a14b
+user:        A U Thor <author@example.com>
+date:        Thu Jan 01 00:00:00 1970 +0000
+files+:      beta
+files-:      alpha
+extra:       branch=default
+description:
+rename alpha to beta
+
+
+changeset:   362b656574c3c9e89fa7f2d7a943091dc93bce4d
+bookmark:    not-master
+phase:       draft
+parent:      -0000000000000000000000000000000000000000
+parent:      -0000000000000000000000000000000000000000
+manifest:    8b8a0e87dfd7a0706c0524afa8ba67e20544cbf0
+user:        A U Thor <author@example.com>
+date:        Mon Jan 01 00:00:00 2007 +0230
+files+:      alpha
+extra:       branch=default
+extra:       committer=C O Mitter <committer@example.com> 1167600600 -9000
+description:
+add alpha
+
+

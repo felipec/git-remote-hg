@@ -1,0 +1,54 @@
+changeset:   9a6668f453c3003b71e11bb8d7572af57a7ce891
+phase:       draft
+parent:      -0000000000000000000000000000000000000000
+parent:      -0000000000000000000000000000000000000000
+manifest:    331ac2e605f2e6092ccb3802244a65b71f3be726
+user:        A U Thor <author@example.com>
+date:        Thu Jan 01 00:00:00 1970 +0000
+files+:      afile
+extra:       branch=default
+description:
+origin
+
+
+changeset:   ead35d346ecb18ce9d9d54604ff62b41caa196ce
+phase:       draft
+parent:      9a6668f453c3003b71e11bb8d7572af57a7ce891
+parent:      -0000000000000000000000000000000000000000
+manifest:    894f8ad9a84f743d52747963d0b9f4e9cf37d489
+user:        A U Thor <author@example.com>
+date:        Thu Jan 01 00:00:01 1970 +0000
+files:       afile
+extra:       branch=default
+description:
+A->B
+
+
+changeset:   d585ac55494928500f510b965b878d47f9ee60f6
+phase:       draft
+parent:      9a6668f453c3003b71e11bb8d7572af57a7ce891
+parent:      -0000000000000000000000000000000000000000
+manifest:    6efc6bb8e097947aa212887bdb01fb89dfa3de13
+user:        A U Thor <author@example.com>
+date:        Thu Jan 01 00:00:02 1970 +0000
+files:       afile
+extra:       branch=default
+description:
+A->C
+
+
+changeset:   542b187b70e70dc759631d1065794f3c2c5a3e7b
+bookmark:    master
+tag:         tip
+phase:       draft
+parent:      d585ac55494928500f510b965b878d47f9ee60f6
+parent:      ead35d346ecb18ce9d9d54604ff62b41caa196ce
+manifest:    0907d7dbc98790102fa6cb91b68b271ef0bc5b64
+user:        A U Thor <author@example.com>
+date:        Thu Jan 01 00:00:03 1970 +0000
+files:       afile
+extra:       branch=default
+description:
+merge to B
+
+

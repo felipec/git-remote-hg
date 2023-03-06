@@ -1,6 +1,6 @@
 RM ?= rm -f
 
-T = main.t bidi.t
+T = $(wildcard *.t)
 SHARNESS_TEST_DIRECTORY := $(CURDIR)
 
 export SHARNESS_TEST_DIRECTORY
@@ -11,7 +11,7 @@ test: $(T)
 	$(MAKE) clean
 
 $(T):
-	$(SHELL) $@ $(TEST_OPTS)
+	./$@ $(TEST_OPTS)
 
 clean:
 	$(RM) -r 'trash directory'.* test-results

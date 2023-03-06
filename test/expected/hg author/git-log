@@ -1,0 +1,141 @@
+blob
+mark :1
+data 6
+alpha
+
+reset refs/heads/not-master
+commit refs/heads/not-master
+mark :2
+author A U Thor <author@example.com> 1167600600 +0230
+committer C O Mitter <committer@example.com> 1167600600 +0230
+data 10
+add alpha
+M 100644 :1 alpha
+
+blob
+mark :3
+data 5
+beta
+
+commit refs/heads/master
+mark :4
+author test <none@none> 0 +0000
+committer test <none@none> 0 +0000
+data 9
+add beta
+from :2
+M 100644 :3 beta
+
+blob
+mark :5
+data 11
+beta
+gamma
+
+commit refs/heads/master
+mark :6
+author test ext:(%20%28comment%29) <test@example.com> 0 +0000
+committer test ext:(%20%28comment%29) <test@example.com> 0 +0000
+data 12
+modify beta
+from :4
+M 100644 :5 beta
+
+blob
+mark :7
+data 6
+gamma
+
+commit refs/heads/master
+mark :8
+author  <test@example.com> 0 +0000
+committer  <test@example.com> 0 +0000
+data 10
+add gamma
+from :6
+M 100644 :7 gamma
+
+blob
+mark :9
+data 6
+delta
+
+commit refs/heads/master
+mark :10
+author name <test@example.com> 0 +0000
+committer name <test@example.com> 0 +0000
+data 10
+add delta
+from :8
+M 100644 :9 delta
+
+blob
+mark :11
+data 8
+epsilon
+
+commit refs/heads/master
+mark :12
+author name <test@example.com> 0 +0000
+committer name <test@example.com> 0 +0000
+data 12
+add epsilon
+from :10
+M 100644 :11 epsilon
+
+blob
+mark :13
+data 5
+zeta
+
+commit refs/heads/master
+mark :14
+author test <none@none> 0 +0000
+committer test <none@none> 0 +0000
+data 9
+add zeta
+from :12
+M 100644 :13 zeta
+
+blob
+mark :15
+data 4
+eta
+
+commit refs/heads/master
+mark :16
+author test <test@example.com> 0 +0000
+committer test <test@example.com> 0 +0000
+data 8
+add eta
+from :14
+M 100644 :15 eta
+
+blob
+mark :17
+data 6
+theta
+
+commit refs/heads/master
+mark :18
+author test ?test@example.com <test ?test@example.com> 0 +0000
+committer test ?test@example.com <test ?test@example.com> 0 +0000
+data 10
+add theta
+from :16
+M 100644 :17 theta
+
+blob
+mark :19
+data 5
+iota
+
+commit refs/heads/master
+mark :20
+author test ext:(%20example%20%3Cdot%3E%20com%3E) <test ?at> 0 +0000
+committer test ext:(%20example%20%3Cdot%3E%20com%3E) <test ?at> 0 +0000
+data 9
+add iota
+from :18
+M 100644 :19 iota
+

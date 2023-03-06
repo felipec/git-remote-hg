@@ -1,0 +1,33 @@
+alpha
+changeset:   16869bbe54be9f8082a8aec346de09f6c05cf1de
+bookmark:    master
+tag:         tip
+phase:       draft
+parent:      362b656574c3c9e89fa7f2d7a943091dc93bce4d
+parent:      -0000000000000000000000000000000000000000
+manifest:    26f8145fb5b20cc6f70dd131b646f95ab79738c0
+user:        A U Thor <author@example.com>
+date:        Thu Jan 01 00:00:00 1970 +0000
+files+:      .hgtags
+extra:       branch=default
+description:
+Added tag alpha for changeset 362b656574c3
+
+
+changeset:   362b656574c3c9e89fa7f2d7a943091dc93bce4d
+bookmark:    not-master
+tag:         alpha
+phase:       draft
+parent:      -0000000000000000000000000000000000000000
+parent:      -0000000000000000000000000000000000000000
+manifest:    8b8a0e87dfd7a0706c0524afa8ba67e20544cbf0
+user:        A U Thor <author@example.com>
+date:        Mon Jan 01 00:00:00 2007 +0230
+files+:      alpha
+extra:       branch=default
+extra:       committer=C O Mitter <committer@example.com> 1167600600 -9000
+description:
+add alpha
+
+
+362b656574c3c9e89fa7f2d7a943091dc93bce4d alpha

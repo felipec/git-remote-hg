@@ -1,0 +1,27 @@
+blob
+mark :1
+data 6
+alpha
+
+reset refs/heads/master
+commit refs/heads/master
+mark :2
+author A U Thor <author@example.com> 0 +0000
+committer A U Thor <author@example.com> 0 +0000
+data 10
+add alpha
+M 100644 :1 alpha
+
+commit refs/heads/master
+mark :3
+author A U Thor <author@example.com> 0 +0000
+committer A U Thor <author@example.com> 0 +0000
+data 52
+rename alpha to beta
+
+--HG--
+rename : alpha => beta
+from :2
+D alpha
+M 100644 :1 beta
+

@@ -1,0 +1,60 @@
+blob
+mark :1
+data 2
+A
+
+reset refs/heads/master
+commit refs/heads/master
+mark :2
+author A U Thor <author@example.com> 0 +0000
+committer A U Thor <author@example.com> 0 +0000
+data 7
+origin
+M 100644 :1 afile
+
+blob
+mark :3
+data 2
+C
+
+commit refs/heads/master
+mark :4
+author A U Thor <author@example.com> 3 +0000
+committer A U Thor <author@example.com> 3 +0000
+data 5
+A->C
+from :2
+M 100644 :3 afile
+
+blob
+mark :5
+data 2
+B
+
+commit refs/heads/master
+mark :6
+author A U Thor <author@example.com> 1 +0000
+committer A U Thor <author@example.com> 1 +0000
+data 5
+A->B
+from :2
+M 100644 :5 afile
+
+commit refs/heads/master
+mark :7
+author A U Thor <author@example.com> 2 +0000
+committer A U Thor <author@example.com> 2 +0000
+data 5
+B->C
+from :6
+M 100644 :3 afile
+
+commit refs/heads/master
+mark :8
+author A U Thor <author@example.com> 4 +0000
+committer A U Thor <author@example.com> 4 +0000
+data 6
+merge
+from :4
+merge :7
+

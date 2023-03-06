@@ -1,0 +1,58 @@
+changeset:   6674f1c866b5c428db4acde16404c14077889646
+bookmark:    master
+tag:         tip
+phase:       draft
+parent:      7e9fd3fd2f75d7de4bf3d77c47f192a51927ac28
+parent:      -0000000000000000000000000000000000000000
+manifest:    ea49f93388380ead5601c8fcbfa187516e7c2ed8
+user:        tést èncödîng <author@example.com>
+date:        Mon Jan 01 00:00:00 2007 +0230
+files+:      delta
+extra:       branch=default
+extra:       committer=C O Mitter <committer@example.com> 1167600600 -9000
+description:
+add déltà
+
+
+changeset:   7e9fd3fd2f75d7de4bf3d77c47f192a51927ac28
+phase:       draft
+parent:      99c5adad03b9a9935e181f4be91ff7693a790110
+parent:      -0000000000000000000000000000000000000000
+manifest:    f580e7da3673c137370da2b931a1dee83590d7b4
+user:        tést èncödîng <author@example.com>
+date:        Mon Jan 01 00:00:00 2007 +0230
+files+:      gamma
+extra:       branch=default
+extra:       committer=C O Mitter <committer@example.com> 1167600600 -9000
+description:
+add gämmâ
+
+
+changeset:   99c5adad03b9a9935e181f4be91ff7693a790110
+phase:       draft
+parent:      1e3e49d2cc8feaad4942d100108f20f207742d3a
+parent:      -0000000000000000000000000000000000000000
+manifest:    f0bd6fbafbaebe4bb59c35108428f6fce152431d
+user:        tést èncödîng <author@example.com>
+date:        Mon Jan 01 00:00:00 2007 +0230
+files+:      beta
+extra:       branch=default
+extra:       committer=C O Mitter <committer@example.com> 1167600600 -9000
+description:
+add beta
+
+
+changeset:   1e3e49d2cc8feaad4942d100108f20f207742d3a
+phase:       draft
+parent:      -0000000000000000000000000000000000000000
+parent:      -0000000000000000000000000000000000000000
+manifest:    8b8a0e87dfd7a0706c0524afa8ba67e20544cbf0
+user:        A U Thor <author@example.com>
+date:        Mon Jan 01 00:00:00 2007 +0230
+files+:      alpha
+extra:       branch=default
+extra:       committer=C O Mitter <committer@example.com> 1167600600 -9000
+description:
+add älphà
+
+
