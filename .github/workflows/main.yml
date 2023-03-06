@@ -21,4 +21,4 @@ jobs:
         with:
           path: ~/.cache/git-remote-hg
           key: check-versions
-      - run: ./tools/check-versions hg:$HG_VERSION
+      - run: ./tools/check-versions $HG_VERSION

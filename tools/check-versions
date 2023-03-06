@@ -1,22 +1,16 @@
 #!/usr/bin/env ruby
 
 #
-# Copyright (c) 2019 Felipe Contreras
+# Copyright (c) 2019-2023 Felipe Contreras
 #
-# This script runs the tests for all versions of the components:
-#   hg, hggit and dulwich
+# This script runs the tests for all versions of hg.
 #
-# You can run it without arguments, in which case it reads the file
-# 'versions.txt' and executes all those checks.
+# You can run it without arguments, in which case it runs the tests for all
+# versions in `versions.txt`.
 #
-# Or you can pass the versions to check manually, like:
+# Or you can specify a single version manually:
 #
-#   ./check-versions hg:4.7 hggit:0.8.12 dulwich:0.19.7
-#
-# Or you can pass just the hg version, the other versions are fetched from
-# 'versions.txt':
-#
-#   ./check-versions hg:5.0
+#   ./check-versions 6.3
 #
 
 require 'fileutils'
@@ -56,34 +50,26 @@ def check_version(a, b)
   (a <=> b) >= 0
 end
 
-# Component {{{1
+# Hg {{{1
 
-class Component
+class Hg
 
-  attr_reader :id
-
-  def initialize(id, url, **args)
-    @id = id
-    @url = url
-    @checkout_fix = args[:checkout_fix]
+  def initialize
+    @url = 'https://www.mercurial-scm.org/repo/hg'
   end
 
   def dir
-    "#{$workdir}/#{@id}"
-  end
-
-  def get_version(version)
-    version == '@' ? 'tip' : version
+    "#{$workdir}/hg"
   end
 
   def clone
-    run_cmd ['hg', 'clone', '-q', @url, dir]
+    run_cmd %w[hg clone -q] + [@url, dir]
   end
 
   def checkout(version)
     Dir.chdir(dir) do
-      run_cmd %w[hg update --clean -q] << get_version(version)
-      @checkout_fix.call(version) if @checkout_fix
+      run_cmd %w[hg update --clean -q] << version
+      checkout_fix(version)
     end
   end
 
@@ -91,6 +77,18 @@ class Component
     Dir.chdir(dir) do
       targets = %w[build_py build_ext].map { |e| [e, '--build-lib', "#{$builddir}/python"] }
       run_cmd %w[python setup.py --quiet] + targets.flatten
+    end
+  end
+
+  def checkout_fix(version)
+    FileUtils.cp('hg', "#{$builddir}/bin/")
+
+    return if check_version(version, '4.3')
+
+    if run_cmd %W[hg import -q --no-commit #{__dir__}/hg_setup_hack_2.4.patch], fatal: false
+      File.write('.hg_force_version', "%s\n" % version)
+    else
+      File.write('mercurial/__version__.py', "version = \"%s\"\n" % version)
     end
   end
 
@@ -103,16 +101,14 @@ def setup
   FileUtils.mkdir_p(dirs.map { |e| "#{$builddir}/#{e}" })
   FileUtils.mkdir_p($workdir)
 
-  $components.each do |id, component|
-    next if File.exists?(component.dir)
+  return if File.exists?($hg.dir)
 
-    if $verbosity < HIGH
-      puts "Cloning #{component.id}"
-    else
-      title "Cloning #{component.id}"
-    end
-    component.clone
+  if $verbosity < HIGH
+    puts "Cloning hg"
+  else
+    title "Cloning hg"
   end
+  $hg.clone
 end
 
 def test_env(paths: nil)
@@ -145,31 +141,14 @@ def run_tests(tests)
   end
 end
 
-def versions_to_s(versions)
-  versions.map { |k,v| "#{k}:#{v}" }.join(' ')
-end
+def check(version)
+  section version
 
-def versions_from_args(args)
-  args.map { |e| k, v = e.split(':'); [k.to_sym, v] }.to_h
-end
+  title "Checking out hg #{version}"
+  $hg.checkout(version)
 
-def versions_from_s(str)
-  versions_from_args(str.split(' '))
-end
-
-def check(versions)
-  section versions_to_s(versions)
-
-  versions.each do |id, version|
-    component = $components[id]
-    next unless component
-
-    title "Checking out #{component.id} #{version}"
-    component.checkout(version)
-
-    title "Building #{component.id}"
-    component.build
-  end
+  title "Building hg"
+  $hg.build
 
   paths = {
     PATH: "#{$builddir}/bin",
@@ -182,43 +161,12 @@ def check(versions)
   end
 end
 
-# Add components {{{1
-
-$components = {}
-
-def add_component(id, url, **args)
-  $components[id] = Component.new(id, url, **args)
-end
-
-hg_checkout_fix = lambda do |version|
-  FileUtils.cp('hg', "#{$builddir}/bin/")
-
-  return if check_version(version, '4.3')
-
-  if run_cmd %W[hg import -q --no-commit #{__dir__}/hg_setup_hack_2.4.patch], fatal: false
-    File.write('.hg_force_version', "%s\n" % version)
-  else
-    File.write('mercurial/__version__.py', "version = \"%s\"\n" % version)
-  end
-end
-
-add_component(:hg, 'https://www.mercurial-scm.org/repo/hg', checkout_fix: hg_checkout_fix)
-
-def load_checks(file)
-  file.each do |e|
-    e.chomp!
-    next if e.empty? or e.start_with?('#')
-    content, comment = e.split(' # ')
-    versions = versions_from_s(content)
-    $checks << versions
-  end
-end
+$hg = Hg.new()
 
 def store_results(file)
-  $results.each do |versions, result|
-    content = versions_to_s(versions)
+  $results.each do |version, result|
     comment = result ? 'OK' : 'FAIL'
-    file.puts '%s # %s' % [content, comment]
+    file.puts '%s # %s' % [version, comment]
   end
 end
 
@@ -229,32 +177,14 @@ setup
 $checks = []
 $results = []
 
-$versions = versions_from_args(ARGV)
+$version = ARGV.first
+$checks = File.readlines(__dir__ + '/versions.txt', chomp: true)
 
-File.open("#{__dir__}/versions.txt") do |f|
-  load_checks(f)
-end
-
-if $versions.size == 1 and $versions.key?(:hg)
-  # mode 1
-  $verbosity = LOW
-
-  if ['@', nil].include?($versions[:hg])
-    versions = $checks.last
-    versions[:hg] = $versions[:hg] if $versions[:hg]
-  else
-    versions = $checks.find { |e| e[:hg] == $versions[:hg] }
-    exit 1 unless versions
-  end
-
-  exit check(versions) ? 0 : 1
-elsif not $versions.empty?
-  # mode 2
+if $version
   $verbosity = HIGH
 
-  exit check($versions) ? 0 : 1
+  exit check($version) ? 0 : 1
 else
-  # mode 3
   $verbosity = QUIET
 
   at_exit do
@@ -265,10 +195,10 @@ else
 
   failures = 0
 
-  $checks.each do |versions|
-    result = check(versions)
+  $checks.each do |version|
+    result = check(version)
     failures += 1 unless result
-    $results << [versions, result]
+    $results << [version, result]
   end
 
   exit 1 unless failures == 0

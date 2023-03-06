@@ -1,52 +1,40 @@
-# vi: ft=ruby
-
-hg:2.4 hggit:0.4.0 dulwich:0.9.0 # 2013_02
-hg:2.5 hggit:0.4.0 dulwich:0.9.0 # 2013_02
-hg:2.6 hggit:0.4.0 dulwich:0.9.0 # 2013_02
-hg:2.7 hggit:0.4.0 dulwich:0.9.0 # 2013_02
-hg:2.8 hggit:0.4.0 dulwich:0.9.0 # 2013_02
-hg:2.9 hggit:0.4.0 dulwich:0.9.0 # 2013_02
-
-hg:3.0 hggit:0.7.0 dulwich:0.10.0 # 2014_11
-hg:3.1 hggit:0.7.0 dulwich:0.10.0 # 2014_11
-hg:3.2 hggit:0.7.0 dulwich:0.10.0 # 2014_11
-
-hg:3.3 hggit:0.8.4 dulwich:0.13.0 # 2016_01
-hg:3.4 hggit:0.8.4 dulwich:0.13.0 # 2016_01
-hg:3.5 hggit:0.8.4 dulwich:0.13.0 # 2016_01
-hg:3.6 hggit:0.8.4 dulwich:0.13.0 # 2016_01
-hg:3.7 hggit:0.8.4 dulwich:0.13.0 # 2016_01
-hg:3.8 hggit:0.8.4 dulwich:0.13.0 # 2016_01
-hg:3.9 hggit:0.8.4 dulwich:0.13.0 # 2016_01
-
-hg:4.0 hggit:0.8.10 dulwich:0.18.0 # 2017_11
-hg:4.1 hggit:0.8.10 dulwich:0.18.0 # 2017_11
-hg:4.2 hggit:0.8.10 dulwich:0.18.0 # 2017_11
-hg:4.3 hggit:0.8.10 dulwich:0.18.0 # 2017_11
-hg:4.4 hggit:0.8.10 dulwich:0.18.0 # 2017_11
-
-hg:4.5 hggit:0.8.11 dulwich:0.18.0 # 2018_02
-hg:4.6 hggit:0.8.13 dulwich:0.19.7 # 2018_10
-hg:4.7 hggit:0.8.13 dulwich:0.19.7 # 2018_10
-hg:4.8 hggit:0.8.13 dulwich:0.19.7 # 2018_10
-hg:4.9 hggit:0.8.13 dulwich:0.19.7 # 2019_01
-hg:5.0 hggit:0.8.13 dulwich:0.19.7 # 2019_04
-hg:5.1 hggit:0.8.13 dulwich:0.19.7 # 2019_07
-hg:5.2 hggit:0.8.13 dulwich:0.19.7 # 2019_11
-
-hg:5.3 hggit:0.9.0 dulwich:0.19.15 # 2020_01
-hg:5.4 hggit:0.9.0 dulwich:0.19.15 # 2020_04
-hg:5.5 hggit:0.9.0 dulwich:0.19.15 # 2020_08
-hg:5.6 hggit:0.9.0 dulwich:0.19.15 # 2020_10
-
-hg:5.7 hggit:0.10.0 dulwich:0.19.16 # 2021_01
-
-hg:5.8 hggit:0.10.2 dulwich:0.20.0 # 2021_05 # python3
-hg:5.9 hggit:0.10.2 dulwich:0.20.0 # 2021_08
-hg:6.0 hggit:0.10.2 dulwich:0.20.0 # 2021_11
-hg:6.1 hggit:0.10.2 dulwich:0.20.0 # 2022_02
-hg:6.2 hggit:0.10.2 dulwich:0.20.0 # 2022_07
-
-hg:6.3 hggit:1.0.1 dulwich:0.20.50
-
-# hg:6.3 hggit:1.0.1 dulwich:0.21.3 # latest
+2.4
+2.5
+2.6
+2.7
+2.8
+2.9
+3.0
+3.1
+3.2
+3.3
+3.4
+3.5
+3.6
+3.7
+3.8
+3.9
+4.0
+4.1
+4.2
+4.3
+4.4
+4.5
+4.6
+4.7
+4.8
+4.9
+5.0
+5.1
+5.2
+5.3
+5.4
+5.5
+5.6
+5.7
+5.8
+5.9
+6.0
+6.1
+6.2
+6.3
