@@ -163,22 +163,15 @@ end
 
 $hg = Hg.new()
 
-def store_results(file)
-  $results.each do |version, result|
-    comment = result ? 'OK' : 'FAIL'
-    file.puts '%s # %s' % [version, comment]
-  end
-end
-
 # Main {{{1
 
 setup
 
 $checks = []
-$results = []
 
 $version = ARGV.first
 $checks = File.readlines(__dir__ + '/versions.txt', chomp: true)
+$results = File.open(__dir__ + '/results.txt', 'w')
 
 if $version
   $verbosity = HIGH
@@ -187,18 +180,12 @@ if $version
 else
   $verbosity = QUIET
 
-  at_exit do
-    File.open("#{__dir__}/results.txt", 'w') do |f|
-      store_results(f)
-    end
-  end
-
   failures = 0
 
   $checks.each do |version|
     result = check(version)
     failures += 1 unless result
-    $results << [version, result]
+    $results.puts '%s # %s' % [version, result ? 'OK' : 'FAIL']
   end
 
   exit 1 unless failures == 0
