@@ -12,6 +12,8 @@ test_description='Test remote-hg output compared to hg-git'
 
 . ./test-lib.sh
 
+export EXPECTED_DIR="$SHARNESS_TEST_DIRECTORY/expected"
+
 if ! test_have_prereq PYTHON
 then
 	skip_all='skipping remote-hg tests; python not available'
@@ -21,17 +23,6 @@ fi
 if ! python -c 'import mercurial' > /dev/null 2>&1
 then
 	skip_all='skipping remote-hg tests; mercurial not available'
-	test_done
-fi
-
-if python -c 'import hggit' > /dev/null 2>&1
-then
-	hggit=hggit
-elif python -c 'import hgext.git' > /dev/null 2>&1
-then
-	hggit=hgext.git
-else
-	skip_all='skipping remote-hg tests; hg-git not available'
 	test_done
 fi
 
@@ -57,21 +48,6 @@ hg_clone_git () {
 	(cd $2 && hg -q update)
 }
 
-# clone to a git repo with hg
-git_clone_hg () {
-	(
-	git init -q $2 &&
-	cd $1 &&
-	hg bookmark -i -f -r tip master &&
-	{ hg -q push -r master ../$2 || true ;}
-	)
-}
-
-# clone to an hg repo with hg
-hg_clone_hg () {
-	hg -q clone $1 $2
-}
-
 # push an hg repo with git
 hg_push_git () {
 	(
@@ -81,14 +57,6 @@ hg_push_git () {
 	git branch -D default &&
 	git checkout -q '@{-1}' &&
 	{ git branch -q -D tmp 2> /dev/null || true ;}
-	)
-}
-
-# push an hg git repo with hg
-hg_push_hg () {
-	(
-	cd $1 &&
-	{ hg -q push ../$2 || true ;}
 	)
 }
 
@@ -102,11 +70,11 @@ git_log () {
 }
 
 test_cmp_expected () {
-	test_cmp "${1}-hg" "${1}-git"
+	test_cmp "$EXPECTED_DIR/$test_id/$1" "${1}-git"
 }
 
 cmp_hg_to_git_log () {
-	for x in hg git
+	for x in git
 	do
 		hg_log hgrepo2-$x > "hg-log-$x" &&
 		git_log gitrepo-$x > "git-log-$x"
@@ -117,7 +85,7 @@ cmp_hg_to_git_log () {
 }
 
 cmp_hg_to_git_log_hgrepo1 () {
-	for x in hg git
+	for x in git
 	do
 		git_clone_$x hgrepo1 gitrepo-$x &&
 		hg_clone_$x gitrepo-$x hgrepo2-$x
@@ -127,7 +95,7 @@ cmp_hg_to_git_log_hgrepo1 () {
 }
 
 cmp_hg_to_git_manifest () {
-	for x in hg git
+	for x in git
 	do
 		(
 		hg_clone_$x gitrepo hgrepo-$x &&
@@ -151,10 +119,6 @@ setup () {
 	[defaults]
 	commit = -d "0 0"
 	tag = -d "0 0"
-	[extensions]
-	$hggit =
-	[git]
-	debugextrainmessage = 1
 	EOF
 
 	cat > "$HOME"/.gitconfig <<-EOF
@@ -176,6 +140,7 @@ setup
 eval "old_$(declare -f test_expect_success)"
 
 test_expect_success () {
+	test_id="$1" &&
 	old_test_expect_success "$1" "
 	test_when_finished \"rm -rf gitrepo* hgrepo*\" && $2"
 }
@@ -326,7 +291,7 @@ test_expect_success 'encoding' '
 	git commit -m "add déltà"
 	) &&
 
-	for x in hg git
+	for x in git
 	do
 		hg_clone_$x gitrepo hgrepo-$x &&
 		git_clone_$x hgrepo-$x gitrepo2-$x &&
@@ -378,7 +343,7 @@ test_expect_success 'git tags' '
 	git tag -a -m "added tag beta" beta
 	) &&
 
-	for x in hg git
+	for x in git
 	do
 		hg_clone_$x gitrepo hgrepo-$x &&
 		hg_log hgrepo-$x > "log-$x"
@@ -388,7 +353,7 @@ test_expect_success 'git tags' '
 '
 
 test_expect_success 'hg author' '
-	for x in hg git
+	for x in git
 	do
 		(
 		git init -q gitrepo-$x &&
@@ -449,7 +414,7 @@ test_expect_success 'hg author' '
 '
 
 test_expect_success 'hg branch' '
-	for x in hg git
+	for x in git
 	do
 		(
 		git init -q gitrepo-$x &&
@@ -480,7 +445,7 @@ test_expect_success 'hg branch' '
 '
 
 test_expect_success 'hg tags' '
-	for x in hg git
+	for x in git
 	do
 		(
 		git init -q gitrepo-$x &&
