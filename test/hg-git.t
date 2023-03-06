@@ -26,8 +26,7 @@ then
 	test_done
 fi
 
-# clone to a git repo with git
-git_clone_git () {
+git_clone () {
 	git clone -q "hg::$1" $2 &&
 	(
 	cd $2 &&
@@ -36,8 +35,7 @@ git_clone_git () {
 	)
 }
 
-# clone to an hg repo with git
-hg_clone_git () {
+hg_clone () {
 	(
 	hg init $2 &&
 	hg -R $2 bookmark -i master &&
@@ -48,8 +46,7 @@ hg_clone_git () {
 	(cd $2 && hg -q update)
 }
 
-# push an hg repo with git
-hg_push_git () {
+hg_push () {
 	(
 	cd $2
 	git checkout -q -b tmp &&
@@ -70,43 +67,34 @@ git_log () {
 }
 
 test_cmp_expected () {
-	test_cmp "$EXPECTED_DIR/$test_id/$1" "${1}-git"
+	test_cmp "$EXPECTED_DIR/$test_id/$1" "$1"
 }
 
 cmp_hg_to_git_log () {
-	for x in git
-	do
-		hg_log hgrepo2-$x > "hg-log-$x" &&
-		git_log gitrepo-$x > "git-log-$x"
-	done &&
+	hg_log hgrepo2 > hg-log &&
+	git_log gitrepo > git-log &&
 
 	test_cmp_expected hg-log &&
 	test_cmp_expected git-log
 }
 
 cmp_hg_to_git_log_hgrepo1 () {
-	for x in git
-	do
-		git_clone_$x hgrepo1 gitrepo-$x &&
-		hg_clone_$x gitrepo-$x hgrepo2-$x
-	done &&
+	git_clone hgrepo1 gitrepo &&
+	hg_clone gitrepo hgrepo2 &&
 
 	cmp_hg_to_git_log
 }
 
 cmp_hg_to_git_manifest () {
-	for x in git
-	do
-		(
-		hg_clone_$x gitrepo hgrepo-$x &&
-		cd hgrepo-$x &&
-		hg_log . &&
-		eval "$1"
-		) > "output-$x" &&
+	(
+	hg_clone gitrepo hgrepo &&
+	cd hgrepo &&
+	hg_log . &&
+	eval "$1"
+	) > output &&
 
-		git_clone_$x hgrepo-$x gitrepo2-$x &&
-		git_log gitrepo2-$x > "log-$x"
-	done &&
+	git_clone hgrepo gitrepo2 &&
+	git_log gitrepo2 > log &&
 
 	test_cmp_expected output &&
 	test_cmp_expected log
@@ -291,14 +279,11 @@ test_expect_success 'encoding' '
 	git commit -m "add déltà"
 	) &&
 
-	for x in git
-	do
-		hg_clone_$x gitrepo hgrepo-$x &&
-		git_clone_$x hgrepo-$x gitrepo2-$x &&
+	hg_clone gitrepo hgrepo &&
+	git_clone hgrepo gitrepo2 &&
 
-		HGENCODING=utf-8 hg_log hgrepo-$x > "hg-log-$x" &&
-		git_log gitrepo2-$x > "git-log-$x"
-	done &&
+	HGENCODING=utf-8 hg_log hgrepo > hg-log &&
+	git_log gitrepo2 > git-log &&
 
 	test_cmp_expected hg-log &&
 	test_cmp_expected git-log
@@ -343,137 +328,125 @@ test_expect_success 'git tags' '
 	git tag -a -m "added tag beta" beta
 	) &&
 
-	for x in git
-	do
-		hg_clone_$x gitrepo hgrepo-$x &&
-		hg_log hgrepo-$x > "log-$x"
-	done &&
+	hg_clone gitrepo hgrepo &&
+	hg_log hgrepo > log &&
 
 	test_cmp_expected log
 '
 
 test_expect_success 'hg author' '
-	for x in git
-	do
-		(
-		git init -q gitrepo-$x &&
-		cd gitrepo-$x &&
+	(
+	git init -q gitrepo &&
+	cd gitrepo &&
 
-		echo alpha > alpha &&
-		git add alpha &&
-		git commit -m "add alpha" &&
-		git checkout -q -b not-master
-		) &&
+	echo alpha > alpha &&
+	git add alpha &&
+	git commit -m "add alpha" &&
+	git checkout -q -b not-master
+	) &&
 
-		(
-		hg_clone_$x gitrepo-$x hgrepo-$x &&
-		cd hgrepo-$x &&
+	(
+	hg_clone gitrepo hgrepo &&
+	cd hgrepo &&
 
-		hg co master &&
-		echo beta > beta &&
-		hg add beta &&
-		hg commit -u "test" -m "add beta" &&
+	hg co master &&
+	echo beta > beta &&
+	hg add beta &&
+	hg commit -u "test" -m "add beta" &&
 
-		echo gamma >> beta &&
-		hg commit -u "test <test@example.com> (comment)" -m "modify beta" &&
+	echo gamma >> beta &&
+	hg commit -u "test <test@example.com> (comment)" -m "modify beta" &&
 
-		echo gamma > gamma &&
-		hg add gamma &&
-		hg commit -u "<test@example.com>" -m "add gamma" &&
+	echo gamma > gamma &&
+	hg add gamma &&
+	hg commit -u "<test@example.com>" -m "add gamma" &&
 
-		echo delta > delta &&
-		hg add delta &&
-		hg commit -u "name<test@example.com>" -m "add delta" &&
+	echo delta > delta &&
+	hg add delta &&
+	hg commit -u "name<test@example.com>" -m "add delta" &&
 
-		echo epsilon > epsilon &&
-		hg add epsilon &&
-		hg commit -u "name <test@example.com" -m "add epsilon" &&
+	echo epsilon > epsilon &&
+	hg add epsilon &&
+	hg commit -u "name <test@example.com" -m "add epsilon" &&
 
-		echo zeta > zeta &&
-		hg add zeta &&
-		hg commit -u " test " -m "add zeta" &&
+	echo zeta > zeta &&
+	hg add zeta &&
+	hg commit -u " test " -m "add zeta" &&
 
-		echo eta > eta &&
-		hg add eta &&
-		hg commit -u "test < test@example.com >" -m "add eta" &&
+	echo eta > eta &&
+	hg add eta &&
+	hg commit -u "test < test@example.com >" -m "add eta" &&
 
-		echo theta > theta &&
-		hg add theta &&
-		hg commit -u "test >test@example.com>" -m "add theta" &&
+	echo theta > theta &&
+	hg add theta &&
+	hg commit -u "test >test@example.com>" -m "add theta" &&
 
-		echo iota > iota &&
-		hg add iota &&
-		hg commit -u "test <test <at> example <dot> com>" -m "add iota"
-		) &&
+	echo iota > iota &&
+	hg add iota &&
+	hg commit -u "test <test <at> example <dot> com>" -m "add iota"
+	) &&
 
-		hg_push_$x hgrepo-$x gitrepo-$x &&
-		hg_clone_$x gitrepo-$x hgrepo2-$x
-	done &&
+	hg_push hgrepo gitrepo &&
+	hg_clone gitrepo hgrepo2 &&
 
 	cmp_hg_to_git_log
 '
 
 test_expect_success 'hg branch' '
-	for x in git
-	do
-		(
-		git init -q gitrepo-$x &&
-		cd gitrepo-$x &&
+	(
+	git init -q gitrepo &&
+	cd gitrepo &&
 
-		echo alpha > alpha &&
-		git add alpha &&
-		git commit -q -m "add alpha" &&
-		git checkout -q -b not-master
-		) &&
+	echo alpha > alpha &&
+	git add alpha &&
+	git commit -q -m "add alpha" &&
+	git checkout -q -b not-master
+	) &&
 
-		(
-		hg_clone_$x gitrepo-$x hgrepo-$x &&
+	(
+	hg_clone gitrepo hgrepo &&
 
-		cd hgrepo-$x &&
-		hg -q co master &&
-		hg mv alpha beta &&
-		hg -q commit -m "rename alpha to beta" &&
-		hg branch gamma | grep -v "permanent and global" &&
-		hg -q commit -m "started branch gamma"
-		) &&
+	cd hgrepo &&
+	hg -q co master &&
+	hg mv alpha beta &&
+	hg -q commit -m "rename alpha to beta" &&
+	hg branch gamma | grep -v "permanent and global" &&
+	hg -q commit -m "started branch gamma"
+	) &&
 
-		hg_push_$x hgrepo-$x gitrepo-$x &&
-		hg_clone_$x gitrepo-$x hgrepo2-$x
-	done &&
+	hg_push hgrepo gitrepo &&
+	hg_clone gitrepo hgrepo2 &&
 
 	cmp_hg_to_git_log
 '
 
 test_expect_success 'hg tags' '
-	for x in git
-	do
-		(
-		git init -q gitrepo-$x &&
-		cd gitrepo-$x &&
+	(
+	git init -q gitrepo &&
+	cd gitrepo &&
 
-		echo alpha > alpha &&
-		git add alpha &&
-		git commit -m "add alpha" &&
-		git checkout -q -b not-master
-		) &&
+	echo alpha > alpha &&
+	git add alpha &&
+	git commit -m "add alpha" &&
+	git checkout -q -b not-master
+	) &&
 
-		(
-		hg_clone_$x gitrepo-$x hgrepo-$x &&
+	(
+	hg_clone gitrepo hgrepo &&
 
-		cd hgrepo-$x &&
-		hg co master &&
-		hg tag alpha
-		) &&
+	cd hgrepo &&
+	hg co master &&
+	hg tag alpha
+	) &&
 
-		hg_push_$x hgrepo-$x gitrepo-$x &&
-		hg_clone_$x gitrepo-$x hgrepo2-$x &&
+	hg_push hgrepo gitrepo &&
+	hg_clone gitrepo hgrepo2 &&
 
-		(
-		git --git-dir=gitrepo-$x/.git tag -l &&
-		hg_log hgrepo2-$x &&
-		cat hgrepo2-$x/.hgtags
-		) > "output-$x"
-	done &&
+	(
+	git --git-dir=gitrepo/.git tag -l &&
+	hg_log hgrepo2 &&
+	cat hgrepo2/.hgtags
+	) > output &&
 
 	test_cmp_expected output
 '
