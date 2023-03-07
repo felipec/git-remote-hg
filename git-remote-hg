@@ -1284,8 +1284,7 @@ def fix_path(alias, repo, orig_url):
     url = urlparse(orig_url, 'file')
     if url.scheme != 'file' or os.path.isabs(os.path.expanduser(url.path)):
         return
-    abs_url = urljoin("%s/" % os.getcwd(), orig_url)
-    cmd = ['git', 'config', 'remote.%s.url' % alias, "hg::%s" % abs_url]
+    cmd = ['git', 'config', 'remote.%s.url' % alias, "hg::%s" % os.path.abspath(orig_url)]
     subprocess.call(cmd)
 
 def main(args):
