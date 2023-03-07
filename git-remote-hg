@@ -12,6 +12,8 @@
 # For remote repositories a local clone is stored in
 # "$GIT_DIR/hg/origin/clone/.hg/".
 
+from __future__ import print_function
+
 from mercurial import hg, ui, bookmarks, context, encoding
 from mercurial import node, error, extensions, discovery, util
 from mercurial import changegroup
@@ -78,10 +80,12 @@ RAW_AUTHOR_RE = re.compile('^(\w+) (?:(.+)? )?<(.*)> (\d+) ([+-]\d+)')
 
 VERSION = 2
 
-def print_data(d):
-    print('data %d' % len(d))
-    sys.stdout.flush()
-    os.write(1, d)
+def print(arg):
+    os.write(1, arg.encode() + b'\n')
+
+def print_data(data):
+    os.write(1, b'data %d\n' % len(data))
+    os.write(1, data)
 
 def debug(*args):
     sys.stderr.write('DEBUG: %s\n' % repr(args))
@@ -1359,10 +1363,6 @@ def main(args):
 
     marks_path = os.path.join(dirname, 'marks-hg')
     marks = Marks(marks_path, repo)
-
-    if sys.platform == 'win32':
-        import msvcrt
-        msvcrt.setmode(sys.stdout.fileno(), os.O_BINARY)
 
     parser = Parser(repo)
     for line in parser:
