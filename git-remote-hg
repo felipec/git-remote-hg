@@ -299,9 +299,12 @@ class Parser:
 
 def fix_file_path(path):
     path = os.path.normpath(path.decode())
-    if not os.path.isabs(path):
+    if os.path.isabs(path):
+        path = os.path.relpath(path, '/')
+    if os.sep == '/':
         return path
-    return os.path.relpath(path, '/')
+    # Git for Windows expects forward
+    return path.replace(os.sep, '/')
 
 def export_files(files):
     final = []
