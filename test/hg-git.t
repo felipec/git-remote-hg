@@ -116,8 +116,10 @@ setup
 eval "old_$(declare -f test_expect_success)"
 
 test_expect_success () {
-	test_id="$1" &&
-	old_test_expect_success "$1" "
+	local req
+	test "$#" = 3 && { req=$1; shift; } || req=
+	test_id="$1"
+	old_test_expect_success "$req" "$1" "
 	test_when_finished \"rm -rf gitrepo* hgrepo*\" && $2"
 }
 
@@ -135,7 +137,7 @@ test_expect_success 'rename' '
 	cmp_hg_to_git_log_hgrepo1
 '
 
-test_expect_success 'executable bit' '
+test_expect_success !WIN 'executable bit' '
 	(
 	git init -q gitrepo &&
 	cd gitrepo &&
@@ -154,7 +156,7 @@ test_expect_success 'executable bit' '
 	cmp_hg_to_git_manifest "hg manifest -v -r -1; hg manifest -v"
 '
 
-test_expect_success 'symlink' '
+test_expect_success !WIN 'symlink' '
 	(
 	git init -q gitrepo &&
 	cd gitrepo &&

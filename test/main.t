@@ -454,7 +454,7 @@ test_expect_success 'remote new bookmark multiple branch head' '
 # cleanup previous stuff
 rm -rf hgrepo
 
-test_expect_success 'fetch special filenames' '
+test_expect_success !WIN 'fetch special filenames' '
 	test_when_finished "rm -rf hgrepo gitrepo && LC_ALL=C" &&
 
 	LC_ALL=en_US.UTF-8

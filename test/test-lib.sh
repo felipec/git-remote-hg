@@ -14,3 +14,8 @@ GIT_COMMITTER_EMAIL=committer@example.com
 GIT_COMMITTER_NAME='C O Mitter'
 export GIT_AUTHOR_EMAIL GIT_AUTHOR_NAME
 export GIT_COMMITTER_EMAIL GIT_COMMITTER_NAME
+
+if [[ $(uname -s) = MSYS* ]]; then
+	test_set_prereq WIN
+	export TEST_CMP='diff --strip-trailing-cr -u'
+fi
