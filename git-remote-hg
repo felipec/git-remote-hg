@@ -441,12 +441,16 @@ def get_repo(url, alias):
             os.makedirs(dirname)
 
         local_path = os.path.join(dirname, 'clone')
-        if not os.path.exists(local_path):
-            hg.share(myui, shared_path.encode(), local_path.encode(), update=False)
+        if check_version(4, 2):
+            if not os.path.exists(local_path):
+                hg.share(myui, shared_path.encode(), local_path.encode(), update=False, relative=True)
         else:
-            # make sure the shared path is always up-to-date
-            hg_path = os.path.join(shared_path, '.hg')
-            util.writefile(os.path.join(local_path, '.hg', 'sharedpath').encode(), hg_path.encode())
+            if not os.path.exists(local_path):
+                hg.share(myui, shared_path.encode(), local_path.encode(), update=False)
+            else:
+                # make sure the shared path is always up-to-date
+                hg_path = os.path.join(shared_path, '.hg')
+                util.writefile(os.path.join(local_path, '.hg', 'sharedpath').encode(), hg_path.encode())
 
         repo = hg.repository(myui, local_path.encode())
         try:
