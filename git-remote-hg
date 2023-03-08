@@ -150,20 +150,10 @@ def get_config_bool(config, default=False):
 
 class Marks:
 
-    def __init__(self, path, repo):
+    def __init__(self, path):
         self.path = path
-        self.repo = repo
         self.clear()
         self.load()
-
-        if self.version < VERSION:
-            if self.version == 1:
-                self.upgrade_one()
-
-            # upgraded?
-            if self.version < VERSION:
-                self.clear()
-                self.version = VERSION
 
     def clear(self):
         self.tips = {}
@@ -182,19 +172,11 @@ class Marks:
         self.tips = tmp['tips']
         self.marks = tmp['marks']
         self.last_mark = tmp['last-mark']
-        self.version = tmp.get('version', 1)
+        self.version = tmp['version']
         self.last_note = tmp.get('last-note', 0)
 
         for rev, mark in self.marks.items():
             self.rev_marks[mark] = rev
-
-    def upgrade_one(self):
-        def get_id(rev):
-            return hghex(self.repo.changelog.node(int(rev))).decode()
-        self.tips = dict((name, get_id(rev)) for name, rev in self.tips.items())
-        self.marks = dict((get_id(rev), mark) for rev, mark in self.marks.items())
-        self.rev_marks = dict((mark, get_id(rev)) for mark, rev in self.rev_marks.items())
-        self.version = 2
 
     def dict(self):
         return { 'tips': self.tips, 'marks': self.marks,
@@ -1362,7 +1344,7 @@ def main(args):
         fix_path(alias, peer or repo, url)
 
     marks_path = os.path.join(dirname, 'marks-hg')
-    marks = Marks(marks_path, repo)
+    marks = Marks(marks_path)
 
     parser = Parser(repo)
     for line in parser:
