@@ -309,25 +309,30 @@ def export_files(files):
 
     return final
 
-def get_filechanges(repo, ctx, parent):
-    modified = set()
-    added = set()
-    removed = set()
+def get_filechanges(repo, ctx, parents, files):
+    if not parents:
+        modified = files
+        removed = []
+        return modified, removed
+    else:
+        modified = set()
+        added = set()
+        removed = set()
 
-    # load earliest manifest first for caching reasons
-    prev = parent.manifest().copy()
-    cur = ctx.manifest()
+        # load earliest manifest first for caching reasons
+        prev = parents[0].manifest().copy()
+        cur = ctx.manifest()
 
-    for fn in cur:
-        if fn in prev:
-            if (cur.flags(fn) != prev.flags(fn) or cur[fn] != prev[fn]):
-                modified.add(fn)
-            del prev[fn]
-        else:
-            added.add(fn)
-    removed |= set(prev.keys())
+        for fn in cur:
+            if fn in prev:
+                if (cur.flags(fn) != prev.flags(fn) or cur[fn] != prev[fn]):
+                    modified.add(fn)
+                del prev[fn]
+            else:
+                added.add(fn)
+        removed |= set(prev.keys())
 
-    return added | modified, removed
+        return added | modified, removed
 
 def fixup_user_git(user):
     name = mail = None
@@ -506,11 +511,7 @@ def export_ref(repo, name, kind, head):
 
         parents = [repo[p] for p in repo.changelog.parentrevs(rev) if p >= 0]
 
-        if not parents:
-            modified = files
-            removed = []
-        else:
-            modified, removed = get_filechanges(repo, c, parents[0])
+        modified, removed = get_filechanges(repo, c, parents, files)
 
         desc += b'\n'
 
