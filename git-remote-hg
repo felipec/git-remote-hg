@@ -297,14 +297,12 @@ def export_file(ctx, fname):
     else:
         mark = marks.next_mark()
         filenodes[fid] = mark
-        d = f.data()
 
         print("blob")
         print("mark :%u" % mark)
-        print_data(d)
+        print_data(f.data())
 
-    path = fix_file_path(fname)
-    return gitmode(f.flags()), mark, path
+    return gitmode(f.flags()), mark, fix_file_path(fname)
 
 def get_filechanges(repo, ctx, parents, files):
     if not parents:
