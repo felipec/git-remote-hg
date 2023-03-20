@@ -506,7 +506,7 @@ def export_ref(repo, name, kind, head):
 
         parents = [repo[p] for p in repo.changelog.parentrevs(rev) if p >= 0]
 
-        if len(parents) == 0:
+        if not parents:
             modified = files
             removed = []
         else:
