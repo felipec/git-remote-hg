@@ -507,7 +507,7 @@ def export_ref(repo, name, kind, head):
         parents = [repo[p] for p in repo.changelog.parentrevs(rev) if p >= 0]
 
         if len(parents) == 0:
-            modified = c.manifest().keys()
+            modified = files
             removed = []
         else:
             modified, removed = get_filechanges(repo, c, parents[0])
