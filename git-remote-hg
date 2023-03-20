@@ -311,13 +311,9 @@ def export_files(files):
 
 def get_filechanges(repo, ctx, parents, files):
     if not parents:
-        modified = files
-        removed = []
-        return modified, removed
+        return files, []
     else:
         modified = set()
-        added = set()
-        removed = set()
 
         # load earliest manifest first for caching reasons
         prev = parents[0].manifest().copy()
@@ -329,10 +325,9 @@ def get_filechanges(repo, ctx, parents, files):
                     modified.add(fn)
                 del prev[fn]
             else:
-                added.add(fn)
-        removed |= set(prev.keys())
+                modified.add(fn)
 
-        return added | modified, removed
+        return modified, prev.keys()
 
 def fixup_user_git(user):
     name = mail = None
