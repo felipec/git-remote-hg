@@ -313,21 +313,8 @@ def get_filechanges(repo, ctx, parents, files):
     if not parents:
         return files, []
     else:
-        modified = set()
-
-        # load earliest manifest first for caching reasons
-        prev = parents[0].manifest().copy()
-        cur = ctx.manifest()
-
-        for fn in cur:
-            if fn in prev:
-                if (cur.flags(fn) != prev.flags(fn) or cur[fn] != prev[fn]):
-                    modified.add(fn)
-                del prev[fn]
-            else:
-                modified.add(fn)
-
-        return modified, prev.keys()
+        stat = parents[0].status(ctx)
+        return stat.modified + stat.added, stat.removed
 
 def fixup_user_git(user):
     name = mail = None
