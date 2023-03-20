@@ -305,12 +305,6 @@ def export_file(f):
     path = fix_file_path(f.path())
     return gitmode(f.flags()), mark, path
 
-def export_files(files):
-    final = []
-    for f in files:
-        final.append(export_file(f))
-    return final
-
 def get_filechanges(repo, ctx, parents, files):
     if not parents:
         return files, []
@@ -529,7 +523,7 @@ def export_ref(repo, name, kind, head):
         if len(parents) == 0 and rev:
             print('reset %s/%s' % (prefix, ename))
 
-        modified_final = export_files(c.filectx(f) for f in modified)
+        modified_final = [export_file(c.filectx(fname)) for fname in modified]
 
         print("commit %s/%s" % (prefix, ename))
         print("mark :%d" % (marks.get_mark(c.hex())))
