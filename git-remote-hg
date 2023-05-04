@@ -470,7 +470,7 @@ def export_ref(repo, name, kind, head):
         if marks.is_marked(c.hex()):
             continue
 
-        (manifest, user, (time, tz), files, desc, extra) = repo.changelog.read(node)
+        manifest, user, (time, tz), files, desc, extra = repo.changelog.read(node)
         rev_branch = extra[b'branch'].decode()
 
         user = user.decode()
@@ -486,7 +486,7 @@ def export_ref(repo, name, kind, head):
         else:
             committer = author
 
-        parents = [repo[p] for p in repo.changelog.parentrevs(rev) if p >= 0]
+        parents = [p for p in c.parents() if p.rev() != -1]
 
         modified, removed = get_filechanges(repo, c, parents, files)
 
@@ -519,10 +519,10 @@ def export_ref(repo, name, kind, head):
             if extra_msg:
                 desc += b'\n--HG--\n' + extra_msg.encode()
 
+        modified_final = [export_file(c, fname) for fname in modified]
+
         if len(parents) == 0 and rev:
             print('reset %s/%s' % (prefix, ename))
-
-        modified_final = [export_file(c, fname) for fname in modified]
 
         print("commit %s/%s" % (prefix, ename))
         print("mark :%d" % (marks.get_mark(c.hex())))
