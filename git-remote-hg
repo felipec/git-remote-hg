@@ -574,6 +574,10 @@ def export_tag(repo, tag):
     node = repo.tags().get(hgref(tag))
     export_ref(repo, tag, 'tags', repo[node])
 
+def export_topic(repo, topic):
+    head = topics[hgref(topic)]
+    export_ref(repo, topic, 'topics', head)
+
 def export_bookmark(repo, bmark):
     head = bmarks[hgref(bmark)]
     export_ref(repo, bmark, 'bookmarks', head)
@@ -590,6 +594,7 @@ def do_capabilities(parser):
     print("import")
     print("export")
     print("refspec refs/heads/branches/*:%s/branches/*" % prefix)
+    print("refspec refs/heads/topics/*:%s/topics/*" % prefix)
     print("refspec refs/heads/*:%s/bookmarks/*" % prefix)
     print("refspec refs/tags/*:%s/tags/*" % prefix)
 
@@ -647,13 +652,24 @@ def do_list(parser):
         items = orig.branchmap().iteritems()
 
     for branch, heads in items:
-        # only open heads
-        try:
-            heads = [h for h in heads if b'close' not in repo.changelog.read(h)[5]]
-            if heads:
+        branch, sep, topic = branch.rpartition(b'//')
+
+        if not sep:
+            branch, topic = topic, None
+        if not branch:
+            branch = b'default'
+
+        if topic:
+            name = b'%s/%s' % (branch, topic)
+            topics[name] = repo[heads[0]]
+        else:
+            # only open heads
+            try:
+                heads = [h for h in heads if b'close' not in repo.changelog.read(h)[5]]
+                if heads:
+                    branches[branch] = heads
+            except error.LookupError:
                 branches[branch] = heads
-        except error.LookupError:
-            branches[branch] = heads
 
     list_head(repo, cur)
 
@@ -664,6 +680,9 @@ def do_list(parser):
     for bmark in bmarks:
         if bmarks[bmark].hex() != b'0' * 40:
             print("? refs/heads/%s" % gitref(bmark))
+
+    for topic in topics:
+        print("? refs/heads/topics/%s" % gitref(topic))
 
     for tag, node in repo.tagslist():
         if tag == b'tip':
@@ -696,6 +715,9 @@ def do_import(parser):
         elif ref.startswith('refs/heads/branches/'):
             branch = ref[len('refs/heads/branches/'):]
             export_branch(repo, branch)
+        elif ref.startswith('refs/heads/topics/'):
+            topic = ref[len('refs/heads/topics/'):]
+            export_topic(repo, topic)
         elif ref.startswith('refs/heads/'):
             bmark = ref[len('refs/heads/'):]
             export_bookmark(repo, bmark)
@@ -827,7 +849,12 @@ def parse_commit(parser):
         get_merge_files(repo, p1, p2, files)
 
     # Check if the ref is supposed to be a named branch
-    if ref.startswith('refs/heads/branches/'):
+    if ref.startswith('refs/heads/topics/'):
+        branch = ref[len('refs/heads/topics/'):]
+        branch, topic = branch.split('/', 2)
+        extra[b'topic'] = hgref(topic)
+        extra[b'branch'] = hgref(branch)
+    elif ref.startswith('refs/heads/branches/'):
         branch = ref[len('refs/heads/branches/'):]
         extra[b'branch'] = hgref(branch)
 
@@ -1089,7 +1116,11 @@ def do_export(parser):
 
     for ref, node in parsed_refs.items():
         bnode = hgbin(node) if node else None
-        if ref.startswith('refs/heads/branches'):
+        if ref.startswith('refs/heads/topics'):
+            # TODO: check if fetch is needed
+            p_revs[bnode] = ref
+            ok_refs.append(ref)
+        elif ref.startswith('refs/heads/branches'):
             g_branch = ref[len('refs/heads/branches/'):]
             branch = g_branch.encode()
             if branch in branches and bnode in branches[branch]:
@@ -1215,7 +1246,7 @@ def fix_path(alias, repo, orig_url):
     subprocess.call(cmd)
 
 def main(args):
-    global prefix, gitdir, dirname, branches, bmarks
+    global prefix, gitdir, dirname, branches, bmarks, topics
     global marks, blob_marks, parsed_refs
     global peer, mode, bad_mail, bad_name
     global track_branches, force_push, is_tmp
@@ -1259,6 +1290,7 @@ def main(args):
     dirname = os.path.join(gitdir, 'hg', alias)
     branches = {}
     bmarks = {}
+    topics = {}
     blob_marks = {}
     parsed_refs = {}
     parsed_tags = {}
