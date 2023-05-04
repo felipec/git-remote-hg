@@ -156,7 +156,7 @@ class Marks:
         self.marks = {}
         self.rev_marks = {}
         self.last_mark = 0
-        self.version = 0
+        self.version = VERSION
         self.last_note = 0
 
     def load(self):
