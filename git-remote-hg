@@ -157,7 +157,6 @@ class Marks:
         self.rev_marks = {}
         self.last_mark = 0
         self.version = VERSION
-        self.last_note = 0
 
     def load(self):
         if not os.path.exists(self.path):
@@ -169,15 +168,13 @@ class Marks:
         self.marks = tmp['marks']
         self.last_mark = tmp['last-mark']
         self.version = tmp['version']
-        self.last_note = tmp.get('last-note', 0)
 
         for rev, mark in self.marks.items():
             self.rev_marks[mark] = rev
 
     def dict(self):
         return { 'tips': self.tips, 'marks': self.marks,
-                'last-mark': self.last_mark, 'version': self.version,
-                'last-note': self.last_note }
+                'last-mark': self.last_mark, 'version': self.version }
 
     def store(self):
         json.dump(self.dict(), open(self.path, 'w'))
@@ -552,17 +549,16 @@ def export_ref(repo, name, kind, head):
 
     pending_revs = set(revs) - notes
     if pending_revs:
-        note_mark = marks.next_mark()
         ref = "refs/notes/hg"
 
         print("commit %s" % ref)
-        print("mark :%d" % (note_mark))
+        print("mark :%d" % marks.next_mark())
         print("committer remote-hg <> %d %s" % (ptime.time(), gittz(ptime.timezone)))
         desc = "Notes for %s\n" % (name)
         print("data %d" % (len(desc)))
         print(desc)
-        if marks.last_note:
-            print("from :%u" % marks.last_note)
+        if tip != -1:
+            print("from %s^0" % ref)
 
         for rev in pending_revs:
             notes.add(rev)
@@ -571,8 +567,6 @@ def export_ref(repo, name, kind, head):
             msg = c.hex()
             print_data(msg)
         print("")
-
-        marks.last_note = note_mark
 
     marks.set_tip(ename, head.hex())
 
