@@ -1027,7 +1027,10 @@ def push(repo, remote, parsed_refs, p_revs):
     force = force_push
 
     fci = discovery.findcommonincoming
-    commoninc = fci(repo, remote, force=force)
+    if check_version(4, 5):
+        commoninc = fci(repo, remote, force=force, ancestorsof=list(p_revs))
+    else:
+        commoninc = fci(repo, remote, force=force)
     common, _, remoteheads = commoninc
     fco = discovery.findcommonoutgoing
     outgoing = fco(repo, remote, onlyheads=list(p_revs), commoninc=commoninc, force=force)
