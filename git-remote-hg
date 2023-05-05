@@ -1049,15 +1049,7 @@ def push(repo, remote, parsed_refs, p_revs):
 
     if force:
         remoteheads = [b'force']
-    ret = remote.unbundle(cg, remoteheads, b'push')
-
-    phases = remote.listkeys(b'phases')
-    if phases:
-        for head in p_revs:
-            # update to public
-            remote.pushkey(b'phases', hghex(head), b'1', b'0')
-
-    return ret
+    return remote.unbundle(cg, remoteheads, b'push')
 
 def check_tip(ref, kind, name, heads):
     try:
