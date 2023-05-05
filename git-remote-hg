@@ -851,7 +851,10 @@ def parse_commit(parser):
     # Check if the ref is supposed to be a named branch
     if ref.startswith('refs/heads/topics/'):
         branch = ref[len('refs/heads/topics/'):]
-        branch, topic = branch.split('/', 2)
+        try:
+            branch, topic = branch.split('/', 2)
+        except ValueError:
+            branch, topic = ('default', branch)
         extra[b'topic'] = hgref(topic)
         extra[b'branch'] = hgref(branch)
     elif ref.startswith('refs/heads/branches/'):
