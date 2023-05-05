@@ -1016,7 +1016,13 @@ def checkheads(repo, remote, p_revs):
 
     return ret
 
-def push_unsafe(repo, remote, parsed_refs, p_revs):
+def push(repo, remote, parsed_refs, p_revs):
+    if hasattr(remote, 'canpush') and not remote.canpush():
+        print("error cannot push")
+
+    if not p_revs:
+        # nothing to push
+        return
 
     force = force_push
 
@@ -1049,16 +1055,6 @@ def push_unsafe(repo, remote, parsed_refs, p_revs):
             remote.pushkey(b'phases', hghex(head), b'1', b'0')
 
     return ret
-
-def push(repo, remote, parsed_refs, p_revs):
-    if hasattr(remote, 'canpush') and not remote.canpush():
-        print("error cannot push")
-
-    if not p_revs:
-        # nothing to push
-        return
-
-    return push_unsafe(repo, remote, parsed_refs, p_revs)
 
 def check_tip(ref, kind, name, heads):
     try:
