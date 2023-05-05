@@ -1038,13 +1038,9 @@ def push_unsafe(repo, remote, parsed_refs, p_revs):
     else:
         cg = changegroup.getchangegroup(repo, b'push', outgoing)
 
-    unbundle = remote.capable(b'unbundle')
-    if unbundle:
-        if force:
-            remoteheads = [b'force']
-        ret = remote.unbundle(cg, remoteheads, b'push')
-    else:
-        ret = remote.addchangegroup(cg, b'push', repo.url())
+    if force:
+        remoteheads = [b'force']
+    ret = remote.unbundle(cg, remoteheads, b'push')
 
     phases = remote.listkeys(b'phases')
     if phases:
@@ -1062,17 +1058,7 @@ def push(repo, remote, parsed_refs, p_revs):
         # nothing to push
         return
 
-    lock = None
-    unbundle = remote.capable(b'unbundle')
-    if not unbundle:
-        lock = remote.lock()
-    try:
-        ret = push_unsafe(repo, remote, parsed_refs, p_revs)
-    finally:
-        if lock is not None:
-            lock.release()
-
-    return ret
+    return push_unsafe(repo, remote, parsed_refs, p_revs)
 
 def check_tip(ref, kind, name, heads):
     try:
