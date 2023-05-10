@@ -652,7 +652,8 @@ def do_list(parser):
         items = orig.branchmap().iteritems()
 
     for branch, heads in items:
-        branch, sep, topic = branch.rpartition(b'//')
+        sep = b':' if b':' in branch else b'//'
+        branch, sep, topic = branch.rpartition(sep)
 
         if not sep:
             branch, topic = topic, None
