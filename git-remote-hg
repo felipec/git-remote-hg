@@ -72,11 +72,11 @@ else:
 # Commits are modified to preserve hg information and allow bidirectionality.
 #
 
-NAME_RE = re.compile('^([^<>]+)')
-AUTHOR_RE = re.compile('^([^<>]+?)? ?[<>]([^<>]*)(?:$|>)')
+NAME_RE = re.compile(r'^([^<>]+)')
+AUTHOR_RE = re.compile(r'^([^<>]+?)? ?[<>]([^<>]*)(?:$|>)')
 EMAIL_RE = re.compile(r'([^ \t<>]+@[^ \t<>]+)')
-AUTHOR_HG_RE = re.compile('^(.*?) ?<(.*?)(?:>(.*))?$')
-RAW_AUTHOR_RE = re.compile('^(\w+) (?:(.+)? )?<(.*)> (\d+) ([+-]\d+)')
+AUTHOR_HG_RE = re.compile(r'^(.*?) ?<(.*?)(?:>(.*))?$')
+RAW_AUTHOR_RE = re.compile(r'^(\w+) (?:(.+)? )?<(.*)> (\d+) ([+-]\d+)')
 
 VERSION = 2
 
@@ -258,7 +258,7 @@ class Parser:
             return None
         _, name, email, date, tz = m.groups()
         if name and 'ext:' in name:
-            m = re.match('^(.+?) ext:\((.+)\)$', name)
+            m = re.match(r'^(.+?) ext:\((.+)\)$', name)
             if m:
                 name = m.group(1)
                 ex = urlunquote(m.group(2))
@@ -328,7 +328,7 @@ def fixup_user_git(user):
 def fixup_user_hg(user):
     def sanitize(name):
         # stole this from hg-git
-        return re.sub('[<>\n]', '?', name.lstrip('< ').rstrip('> '))
+        return re.sub(r'[<>\n]', '?', name.lstrip('< ').rstrip('> '))
 
     m = AUTHOR_HG_RE.match(user)
     if m:
