@@ -101,7 +101,7 @@ def setup
   FileUtils.mkdir_p(dirs.map { |e| "#{$builddir}/#{e}" })
   FileUtils.mkdir_p($workdir)
 
-  return if File.exists?($hg.dir)
+  return if File.exist?($hg.dir)
 
   if $verbosity < HIGH
     puts "Cloning hg"
