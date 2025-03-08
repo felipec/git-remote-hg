@@ -507,11 +507,11 @@ def export_ref(repo, name, kind, head):
                 extra_msg += (b"rename : %s => %s\n" % e).decode()
 
             for key, value in extra.items():
-                key, value = key.decode(), value.decode()
-                if key in ('author', 'committer', 'encoding', 'message', 'branch', 'hg-git'):
+                key = key.decode()
+                if key in ('author', 'committer', 'encoding', 'message', 'branch', 'hg-git', 'transplant_source'):
                     continue
                 else:
-                    extra_msg += "extra : %s : %s\n" % (key, urlquote(value))
+                    extra_msg += "extra : %s : %s\n" % (key, urlquote(value.decode()))
 
             if extra_msg:
                 desc += b'\n--HG--\n' + extra_msg.encode()
