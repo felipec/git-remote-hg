@@ -22,7 +22,7 @@ test_set_prereq() {
 }
 satisfied_prereq=" "
 
-if [[ $(uname -s) = MSYS* ]]; then
+if [[ $(uname -s) = MSYS* ]] || [[ $(uname -s) = MINGW* ]]; then
 	test_set_prereq WIN
 	export TEST_CMP='diff --strip-trailing-cr -u'
 fi
