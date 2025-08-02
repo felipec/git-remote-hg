@@ -22,4 +22,4 @@ jobs:
       - name: Install hg
         run:
           pip install mercurial==${{ matrix.hg }}
-      - run: make test
+      - run: prove -j4
