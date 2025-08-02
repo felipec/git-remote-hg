@@ -8,7 +8,7 @@ all: doc
 doc: doc/git-remote-hg.1
 
 test:
-	$(MAKE) -C test
+	$(MAKE) -C t
 
 doc/git-remote-hg.1: doc/git-remote-hg.txt
 	asciidoctor -b manpage $<
