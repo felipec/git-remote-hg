@@ -22,3 +22,20 @@ jobs:
         run:
           pip install mercurial==${{ matrix.hg }}
       - run: prove -j4
+  test-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/cache@v4
+        id: cache-pip
+        with:
+          path: ~/appdata/local/pip/cache
+          key: pip-windows
+      - name: Install hg
+        run:
+          pip install mercurial
+      - name: Run all tests
+        run: prove -j4 --exec bash.exe
