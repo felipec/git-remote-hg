@@ -10,7 +10,7 @@
 
 test_description='Test remote-hg output compared to hg-git'
 
-. ./test-lib.sh
+. "$(dirname "$0")"/test-lib.sh
 
 export EXPECTED_DIR="$SHARNESS_TEST_DIRECTORY/expected"
 
