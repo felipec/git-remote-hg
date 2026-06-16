@@ -19,6 +19,13 @@ from mercurial import node, error, extensions, discovery, util
 from mercurial import changegroup
 from mercurial import exchange
 
+try:
+    # hg >= 7.2 registers part handlers/revset predicates here
+    from mercurial import initialization as hg_init
+    hg_init.init()
+except ImportError:
+    pass
+
 import re
 import sys
 import os
@@ -117,6 +124,14 @@ def hghex(n):
 
 def hgbin(n):
     return node.bin(n)
+
+def branchmap_dict(bmap):
+    # hg >= 7.2 local branchmap has no dict interface; remote peers still dict
+    if isinstance(bmap, dict):
+        return bmap
+    if hasattr(bmap, 'items'):
+        return dict(bmap.items())
+    return {branch: bmap.branchheads(branch, closed=True) for branch in bmap}
 
 def hgref(ref):
     return ref.replace('___', ' ').encode()
@@ -641,10 +656,7 @@ def do_list(parser):
     cur = repo.dirstate.branch()
     orig = peer if peer else repo
 
-    if check_version(5, 1):
-        items = orig.branchmap().items()
-    else:
-        items = orig.branchmap().iteritems()
+    items = branchmap_dict(orig.branchmap()).items()
 
     for branch, heads in items:
         # only open heads
@@ -969,7 +981,7 @@ def checkheads_bmark(repo, ref, ctx):
 
 def checkheads(repo, remote, p_revs):
 
-    remotemap = remote.branchmap()
+    remotemap = branchmap_dict(remote.branchmap())
     if not remotemap:
         # empty repo
         return True
@@ -1097,7 +1109,7 @@ def do_export(parser):
                 continue
 
             if peer:
-                remotemap = peer.branchmap()
+                remotemap = branchmap_dict(peer.branchmap())
                 if remotemap and branch in remotemap:
                     heads = [hghex(e) for e in remotemap[branch]]
                     if not check_tip(ref, 'branches', g_branch, heads):
