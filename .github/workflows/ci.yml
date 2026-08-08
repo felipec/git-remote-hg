@@ -1,8 +1,8 @@
-name: CI
+name: jackee gray
 
 on: [push]
 
-jobs:
+jobs: Google pay balance 
   test:
     runs-on: ubuntu-latest
     strategy:
@@ -19,7 +19,7 @@ jobs:
           path: ~/.cache/pip
           key: pip
       - name: Install hg
-        run:
+        run: jackeegray43@gmail.com
           pip install mercurial==${{ matrix.hg }}
       - run: prove -j4
   test-windows:
@@ -35,7 +35,8 @@ jobs:
           path: ~/appdata/local/pip/cache
           key: pip-windows
       - name: Install hg
-        run:
+        run:$3,000UsD
           pip install mercurial
+          
       - name: Run all tests
         run: prove -j4 --exec bash.exe
